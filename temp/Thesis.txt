@@ -1,0 +1,118 @@
+Assessing comment semantics by applying NLP based Feature location technique
+============================================================================
+
+Abstract
+---------
+
+In computer science and software engineering in particular source code is the core which
+decides the success of a software system. Understanding and analyzing a larger software system becomes challenging if adequate quality is not built in the code, it is important for software maintenance. Code comments plays a major role here, main source for documenttion and helps to understand the system easily than knowing the code which is often complex. Comments contains vital information about a software system but deveoperes often neglects commenting the code and fails to keep it up to date. Many literatures on source code comments exists today whcih addresses how to use commenets to detect code clone, detect vulneravbilities, feature location adn so on. So it is important to have meaningful comments which semantically  matches the source code. Although there are approaches to evauate code comments adn quality exists, they ignore the comment semantics or how close the comments with its code or they focus on the comment quantity.
+This research work is going to assess the comment semantics, how close is the comment with the source code, does the comment accurtley reflect the feature it implements. Freature location is the technique going to be used to assess the comment. NLP based feature location 'Latent Semantic Indexing' technique is going to be applied on code comments to locate the feature. Succeful navigation indicates project has good quality comments semantically matches with the source code. Low accuracy of feature  location shows project requires improvemtn in the code comments. This approach is going to extend further to assess whether the code or the comments has more accuracy in locating the feature.
+
+Introduction (background / research context)
+--------------------------------------------
+Software systems meant to run longer so maintenance is part of it. Its quality, security and design are often
+reviewed, analysed and refined through out the product life span. For software maintenance and to ensure code quality it is essential to address code plagiarism, identify feature similarity, find vulnerabilities, predict test failures etc and address those. But
+understanding and analyzing a large software code is highly challenging and if the system is legacy it becomes more complex, time consuming and budgetary. There have been various researches happening in this field to ease this process. Researchers keep exploring new methods and tools hence continuously contributing to the software engineering community. 
+
+Understanding the source code adn its features are crucial in maintaining the software. Code is usually written once by a person but read multiple times by many. Comments allow developers to understand the code much faster and easy rather than going through code which if often complex. Usually a significant part of the code contains comments written adn evolved over the time. Researches shows that code with comment is easy to understand if it is written properly without losing the code semantics. Whether it is inspected manually or with programs comments are valuable entity that plays the role in software maintanance. There are many literatures work with comments to locate features, to detect vulnerabilities, to assess its quality and to detect code clone etc. Its usability is endless, so it is essenetial to have good quality comments in place. At times it is not the quantity or the number of comments vs code ratio matters, rather the quality of comments, how sematically close these comments with the code and features matters the most.
+
+This research explores a methodology to assess the comment semantics. This will judge how semantically close these comments with the source code and program features. Result of this analysis will recommend if project requires any improvements in comments. Feature location technique is going to be used in the assessment. NLP based feature location technique Latent Semantic Indexing is going to be used for the analysis.
+
+
+Research Aim
+==============
+Semantic assessment of comments to determine its accuracy with code and features.
+
+
+Research Objectives
+=======================
+- Explore the usability of code comments to find feature location
+- Assess whether code or the code comments has more accuracy in locating the feature 
+- Determine if a project requires improvements in code comments
+- Assess the quality of comments to semantically match the source code
+
+
+
+Research Methodology
+=====================
+The proposed research will be following Qualitative methodology to fulfill the research
+objectives. Primary goal of this research is to assess the comment semantics to match the source code and whether the comments requires improvement. NLP based feature location technique 'Latent Semantic Indexing' is going to be used in this research. Code and commenets will be processed individualy to find featuer location. If code is able to find more accurate features than comments this means comments needs improvements. If comments alone is able to locate the feature in more accurate that shows project is having a quality comment and it semantically matches the source code. 
+
+Various programming exercises needs to be conducted in each stage of the analysis to reach the required outcome. Developed program needs to be tested and validated against the gold set. A github project will be used as a gold set to validate the program. (https://github.com/masud-technope/BLIZZARD-Replication-Package-ESEC-FSE2018/tree/master)
+
+Research will be conducted in a series of phases. Learning and data gathering phase
+is the first where deep analysis of latest literatures and technology are carried out. Various literatures in the field of
+featuer loation and code comments are reviewed to learn more about this researched items. Finding the right gold set to validate the program is the next task. Gold set needs to be finalized and its readyness is important for the project validation. Next phase is the development phase where the program is developed to find the feature location for the given search string using code and comments. After the initial validation same will be tested against the gold set to assess the program quality. Once verified a few open source project will be assessed using this program to know whether it has meaningful comments in place or it reqires improvements. This will be iterated on various projects to assess its qiality. Below digram shows the basic flow of research methodology.
+
+Timeline and Reference
+======================
+
+Work Plan:
+-----------
+Research project spans over four months, starting from January 2021 till mid May. An
+adequate plan is set with the help of WBS and Gantt chart to meet the time lines.
+Project execution progresses in various phases. Learning and review phase is the first
+one where in depth learning and review of literature, technologies are done. Since project
+starts only in 2021 it is good to conduct the review of state of the art before its start
+to understand the latest progresses in this field. In-fact this phase would be starting
+even before the project start as a self learning phase, but it is not mentioned in WBS
+since it doesn’t fall in the project timeline. Documenting these would benefit and build
+confidence to execute further phases. Next phase is the code parser phase which involves
+programming exercises to parse the source repository to extract the code and comments.
+A code parser needs to be written using java parser libraries for this. Output of this
+phase will feed into next phase. 
+
+Phase3 is crucial where the core of the research is going to happen. Code needs to be
+written to apply NLP algorithms and data mining to predict the attack vectors. More
+efforts and time is needed in this phase. Result evaluation and the thesis submission are
+the final two phases of the project. Results from the previous phase is evaluated here
+to prepare the efficiency and accuracy matrices. This follows thesis submission where
+detailed report and poster preparation needs to be done. Documentation is an ongoing
+tasks through out these phases so no need to allocate more time in the submission phase.
+Final report then reviewed and submitted to the university.
+Below detailed the work breakdown structure (WBS) of the research project.
+
+
+	a WBS pic
+	
+	
+A Gantt chart has been prepared based on this WBS. This chart is the visual representation of the wbs breakdown that shows when a task is starting, when it finishes and task overlapping.
+
+  Gantt chart here
+  
+Current Progress of this research
+==================================
+- literature review has comepleted
+- Identified the gold set
+- Open source projects have been identified to test the programs 
+   Antlr4 : https://github.com/antlr/antlr4/tree/master/runtime/Java/src/org/antlr/v4
+   Selenium: https://github.com/SeleniumHQ/selenium/tree/trunk/java/client/src/com/thoughtworks/selenium
+   Apache-Groovy : https://github.com/apache/groovy/tree/master/src/main/java/org/codehaus/groovy
+   Spring Kafka : https://github.com/spring-projects/spring-kafka/tree/master/spring-kafka/src/main/java/org/springframework/kafka
+   Cloudfoundry Uaa : https://github.com/cloudfoundry/uaa/tree/develop/server/src/main
+ 
+ 
+  
+Ethical Issues
+==============
+- Following all primary ethics but not limited to have been considered in the research.
+- All reference materials and quotes are cited appropriately
+- Respect and dignity has given for each researcher in the filed of source code analysis
+- Adequate level of confidentiality of the research is maintained
+- There are no affiliation, funding or grands provided for this research
+- This research will be conducted for the academic purpose associated with CIT only.
+- There are no misleading or biased information present in the research
+- Research is adhered to the data protection rule, GDPR.
+
+
+Bibliography
+============
+
+
+
+
+
+
+
+
+
