@@ -28,7 +28,6 @@ https://github.com/masud-technope/ACER-Replication-Package-ASE2017/tree/master/c
 
 
 Literatures:
-https://ieeexplore.ieee.org/document/8766656 (Location Prediction Based on Comment Analysis - 2019)
 
 https://ieeexplore.ieee.org/document/6613836 (Quality analysis of src code comments - 2013)
 
@@ -39,6 +38,12 @@ https://ieeexplore.ieee.org/document/7820211 (Using Natural Language Processing 
 https://ieeexplore.ieee.org/document/8506550  (Semantic Clone Detection: Can Source Code Comments Help? - 2018)
 
 https://ieeexplore.ieee.org/document/8920024 (Deep Code-Comment Understanding and Assessment - 2019)
+
+https://ieeexplore.ieee.org/document/8809910 (Learning Code Context Information to Predict Comment Locations)
+
+https://ieeexplore.ieee.org/document/7781805 (Similarity of Source Code in the Presence of Pervasive Modifications)
+
+https://ieeexplore.ieee.org/document/8719486 (Analyzing Code Comments to Boost Program Comprehension)
 
 
 
@@ -75,12 +80,19 @@ Some comments are code-commented, it would be good to identify them using some N
 Q: Is it improving the quality of the FL by removing code-commented?
 
 
+notes: FL is categorised into 3, adn I am using static feature location techniqes.
 
+Lucene : It has only indexing the document, for comparison I need to use cosine techniques
 
+LSI : Do it manually. 
 
+Composition matrix analysis. Mohamed Elsber.
 
+in the final document add Comparison outputs of various projects.
 
+Doc2Vec : when working with comments.
 
+Ask these questions to couple of other people to see they can idetify the feature program, then run the tool against it.
 
 
 

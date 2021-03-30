@@ -1,0 +1,2 @@
+INDEX VERSION 1.131+C:\SAD\CommentSemantics\.metadata\.plugins\org.eclipse.jdt.core
+1816746748.index
