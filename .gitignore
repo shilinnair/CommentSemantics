@@ -1,0 +1,14 @@
+war/WEB-INF/classes/
+war/WEB-INF/gensrc/
+war/WEB-INF/platform/configuration/
+war/WEB-INF/ready_reports/
+.idea/
+.metadata/
+war/WEB-INF/config/application/unique.txt
+etc/hsqldb/hsqldb_data_4.6.8/mcdbs.lck
+target/classes/
+target/gensrc/
+out/
+war/WEB-INF/hsqldb_data/
+war/WEB-INF/hsqldb_reset_data/
+*.class
