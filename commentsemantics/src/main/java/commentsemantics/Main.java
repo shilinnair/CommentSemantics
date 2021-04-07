@@ -31,6 +31,8 @@ public class Main {
 	{
 		System.out.println("Launching the application..");
 		
+		new UserScreen().showUI();
+		
 		beginParsing();
 		
 	}
