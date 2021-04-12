@@ -55,7 +55,7 @@ public class FileParser {
 		node.accept(new ArtefactVisitor(artefact), null);
 
 		// find comment tokens
-		for (Comment comment : node.findAll(Comment.class)) {
+		for (Comment comment : node.getAllContainedComments()) {
 			comments.addAll(tokenizeName(comment.getContent(), true));
 		}
 

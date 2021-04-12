@@ -96,4 +96,38 @@ Ask these questions to couple of other people to see they can idetify the featur
 
 
 
+FYI from farshad
+--------------------
+ 
+
+Ev1: VSM on Comment
+
+Ev2: VSM on JavaDoc
+
+Ev3: VSM on Comment-block
+
+Ev4: VSM on Line-Comment
+
+Ev4.2: VSM without commented code
+
+ 
+
+Ev1: LSI on Comment
+
+Ev2: LSI on JavaDoc
+
+Ev3: LSI on Comment-block
+
+Ev4: LSI on Line-Comment
+
+Ev4.2: LSI without commented code
+
+ 
+If all experiments above are done properly, you may consider the following as well to check the natural similarities between the results obtained from query search.
+
+using vsm get 1 java file reslt.
+using that find the simlairty dcumenet (say 5 files)
+now rerun the query and get the 5 files from the original result and see are ve getting those resuls.
+those files are in the gold set? if some not found, coulude they are similar for the artefacts but not the code.
+
 

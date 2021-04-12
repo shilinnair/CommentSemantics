@@ -118,7 +118,7 @@ public class VsmFeatureLocation implements FeatureLocation
 		{
 			RealVector rvInputFile = realVectors.get(fileindex); // get the real vector associated with input file																	
 
-			Map<Double, Integer> cosineMap = new HashMap<Double, Integer>(); // cosinevalue : index
+			Map<Double, Integer> cosineMap = new HashMap<Double, Integer>(); // cosine value : index
 
 			for (int i = 0; i < realVectors.size(); i++) {
 

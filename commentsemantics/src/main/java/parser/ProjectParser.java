@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
+import com.github.javaparser.ParseProblemException;
 
 public class ProjectParser 
 {
@@ -48,6 +49,11 @@ public class ProjectParser
 					System.out.println("Exception caught in parseProject. UnsolvedSymbolException! " + e4.getMessage());
 					System.out.println(e4.getStackTrace()[1].toString() + System.lineSeparator() + e4.getStackTrace()[2].toString());
 				}
+				catch (ParseProblemException e5) {
+					System.out.println("Exception caught in parseProject. FileNotFoundException! " + e5.getMessage());
+					System.out.println(e5.getStackTrace()[1].toString() + System.lineSeparator() + e5.getStackTrace()[2].toString());
+				}
+				
 			}			
 		}
 	}
