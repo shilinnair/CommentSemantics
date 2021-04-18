@@ -3,3 +3,17 @@ detect code-commented:
 * may be this regular expression works : (/\*.*;.*\*/)|(//.*;)
 
 * work with removing commented code by heuristic methodology
+
+^\s*//.*;\s*$
+
+
+^.*'.*\n.*'.*\n.*'.*$
+
+
+^.*'.*$
+
+
+(^|[^/])//[^/]
+
+
+find = sign;  (^\s*'.=.\n)^

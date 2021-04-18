@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import featurelocation.LsiFeatureLocation;
+import featurelocation.VsmDocSimilarity;
 import featurelocation.VsmFeatureLocation;
 import parser.FileParser;
 import parser.ProjectParser;
@@ -13,11 +14,13 @@ public class Main {
 	
 	
 	private static void beginParsing()
-	{
+	{		
+		VsmDocSimilarity vsmDocSimilarity = new VsmDocSimilarity();
+		VsmFeatureLocation vsmFL = new VsmFeatureLocation(vsmDocSimilarity);
 		LsiFeatureLocation lsiFL = new LsiFeatureLocation();
-		VsmFeatureLocation vsmFL = new VsmFeatureLocation();
 		
 		FileParser fileParser = new FileParser();
+		fileParser.includeArtefact(false);
 		fileParser.setLsiObject(lsiFL);
 		fileParser.setVsmObject(vsmFL);
 		
@@ -29,7 +32,7 @@ public class Main {
 		
 		
 		try {
-			lsiFL.printSimilarDocuments();
+			lsiFL.querySearch("block line java");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -32,11 +32,24 @@ public class FileParser {
 	
 	private FeatureLocation vsmFL;
 	private FeatureLocation lsiFL;
+
+	private boolean UseArtefact = false;
+	private boolean RemoveCodeComments = false;
 		
 	public void reset()
 	{
 		artefact.clear();
 		comments.clear();	
+	}
+	
+	public void includeArtefact(boolean usage)
+	{
+		this.UseArtefact = usage;
+	}
+	
+	public void removeCodeComments(boolean usage)
+	{
+		this.RemoveCodeComments = usage;
 	}
 	
 	public void setVsmObject(FeatureLocation vsmFL)
@@ -55,13 +68,28 @@ public class FileParser {
 		node.accept(new ArtefactVisitor(artefact), null);
 
 		// find comment tokens
-		for (Comment comment : node.getAllContainedComments()) {
-			comments.addAll(tokenizeName(comment.getContent(), true));
+		for (Comment comment : node.getAllContainedComments()) 
+		{
+			String refinedComment = comment.getContent();
+			
+			//remove commented code
+			if(RemoveCodeComments) {				
+				refinedComment = CodeCommentParser.parseCodeComments(refinedComment);
+				if(refinedComment.isEmpty())
+					continue;
+			}
+			
+			comments.addAll(tokenizeName(refinedComment, true));
 		}
-
+				
+		//if artefact also needs to be considered add it to the final data 
+		if(UseArtefact) {
+			comments.addAll(artefact);
+		}
+		
 		// prepare document for each FL techniques
-		vsmFL.prepareDocument(fileName, artefact, comments);
-		lsiFL.prepareDocument(fileName, artefact, comments);		
+		vsmFL.prepareDocument(fileName, comments);
+		lsiFL.prepareDocument(fileName, comments);			
 		
 		artefact.clear();
 		comments.clear();
