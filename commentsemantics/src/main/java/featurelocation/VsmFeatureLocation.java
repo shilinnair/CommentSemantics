@@ -94,6 +94,7 @@ public class VsmFeatureLocation implements FeatureLocation
 			writer.close();
 
 		IndexReader reader = DirectoryReader.open(directory);
+		
 
 		List<RealVector> realVectors = new ArrayList<RealVector>();
 		ArrayList<String> allTerms = getAllTerms(reader, scope);

@@ -62,6 +62,9 @@ public class FileParser {
 		// prepare document for each FL techniques
 		vsmFL.prepareDocument(fileName, artefact, comments);
 		lsiFL.prepareDocument(fileName, artefact, comments);		
+		
+		artefact.clear();
+		comments.clear();
 	}
 	
 	//feature location visitor

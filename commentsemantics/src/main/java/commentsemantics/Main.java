@@ -1,6 +1,7 @@
 package commentsemantics;
 
 import java.io.File;
+import java.io.IOException;
 
 import featurelocation.LsiFeatureLocation;
 import featurelocation.VsmFeatureLocation;
@@ -25,15 +26,24 @@ public class Main {
 		String projDir = "C:\\SAD\\semester4\\CodeAnalysisProject\\assignments\\testprojects\\SimpleIO\\src";
 		
 		projParser.parseProject(new File(projDir));		
+		
+		
+		try {
+			lsiFL.printSimilarDocuments();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args) 
 	{
 		System.out.println("Launching the application..");
 		
-		new UserScreen().showUI();
+		//new UserScreen().showUI();
 		
 		beginParsing();
+	
 		
 	}
 }
