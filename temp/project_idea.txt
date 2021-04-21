@@ -98,7 +98,7 @@ Ask these questions to couple of other people to see they can idetify the featur
 
 FYI from farshad
 --------------------
- 
+Do the following evaluations.
 
 Ev1: VSM on Comment
 

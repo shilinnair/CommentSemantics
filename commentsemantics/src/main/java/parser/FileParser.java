@@ -16,25 +16,68 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.javadoc.Javadoc;
 
 import featurelocation.FeatureLocation;
 
 public class FileParser {
 	
-	private final static String [] RESERVED_WORDS = {"about", "again", "all", "am", "an", "and", "any", "are", "array", "as", "at", "be", "because", "been", "before", "below", "between", "both", "but", "by", "cannot", "class", "could", "did", "do", "does", "down", "double", "each", "few", "for", "from", "further", "get", "had", "has", "have", "he", "her", "here", "hers", "herself", "him", "himself", "his", "how", "if", "in", "int", "integer", "into", "is", "it", "its", "itself", "list", "me", "more", "most", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "our", "ours", "ourselves", "out", "over", "own", "same", "set", "she", "should", "so", "some", "string", "such", "than", "that", "the", "their", "theirs", "them", "themselves", "then", "there", "these", "they", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why", "with", "would", "you", "your", "yours", "yourself", "yourselves"};
+	private final static String [] RESERVED_WORDS = {"about", "again", "all", "am", "an", "and", "any", "are", "array", "as", "at", "be", "because", "been", "before", "below", "between", "both", "but", "by", "cannot", "class", "could", "did", "do", "does", "down", "double", "each", "few", "for", "from", "further", "get", "had", "has", "have", "he", "her", "here", "hers", "herself", "him", "himself", "his", "how", "if", "in", "int", "integer", "into", "is", "it", "its", "itself", "list", "me", "more", "most", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "our", "ours", "ourselves", "out", "over", "own", "same", "set", "she", "should", "so", "some", "string", "such", "than", "that", "the", "their", "theirs", "them", "themselves", "then", "there", "these", "they", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why", "with", "would", "you", "your", "yours", "yourself", "yourselves", "String"};
 	
 	private List<String> artefact = new ArrayList<String>(); // artifact tokens
 	private List<String> comments = new ArrayList<String>(); // comment tokens
 	
 	private FeatureLocation vsmFL;
 	private FeatureLocation lsiFL;
+	
+	public void setVsmFL(FeatureLocation vsmFL) {
+		this.vsmFL = vsmFL;
+	}
+	
+	public void setLsiFL(FeatureLocation lsiFL)
+	{
+		this.lsiFL = lsiFL;
+	}
 
-	private boolean UseArtefact = false;
-	private boolean RemoveCodeComments = false;
+	private boolean UseArtefact = false;         // use artefact together with comments for feature location
+	private boolean UseFullComments = false;     // use all comments for feature location
+	private boolean UseLineComments = false;     // use only line comments for feature location 
+	private boolean UseBlockComment = false;     // use only block comments for feature location
+	private boolean UseJavadocComment = false;   // use only java doc comments for feature location
+	private boolean RemoveCodeComments = false;  // do not consider commented code for feature location   
+	
+	
+	public void setUseFullComments(boolean useFullComments) {
+		UseFullComments = useFullComments;
+	}
+
+	public void setUseArtefact(boolean useArtefact) {
+		UseArtefact = useArtefact;
+	}
+
+	public void setUseLineComments(boolean useLineComments) {
+		UseLineComments = useLineComments;
+	}
+
+	public void setUseBlockComment(boolean useBlockComment) {
+		UseBlockComment = useBlockComment;
+	}
+
+	public void setUseJavadocComment(boolean useJavadocComment) {
+		UseJavadocComment = useJavadocComment;
+	}
+	
+	public void setRemoveCodeComments(boolean removeCodeComments) {
+		this.RemoveCodeComments = removeCodeComments;		
+	}
+	
 		
 	public void reset()
 	{
@@ -42,44 +85,80 @@ public class FileParser {
 		comments.clear();	
 	}
 	
-	public void includeArtefact(boolean usage)
-	{
-		this.UseArtefact = usage;
-	}
-	
-	public void removeCodeComments(boolean usage)
-	{
-		this.RemoveCodeComments = usage;
-	}
-	
-	public void setVsmObject(FeatureLocation vsmFL)
-	{
-		this.vsmFL = vsmFL;
-	}
-	
-	public void setLsiObject(FeatureLocation lsiFL)
-	{
-		this.lsiFL = lsiFL;
-	}
 
 	public void parseNode(String fileName, Node node, String parent) 
 	{
-		// find artifact tokens
-		node.accept(new ArtefactVisitor(artefact), null);
-
+		// find artifact tokens if enabled
+		if(UseArtefact) {
+			node.accept(new ArtefactVisitor(artefact), null);
+		}
+		
+		
 		// find comment tokens
-		for (Comment comment : node.getAllContainedComments()) 
-		{
-			String refinedComment = comment.getContent();
+		if(UseFullComments) {   //full comment search mode
 			
-			//remove commented code
-			if(RemoveCodeComments) {				
-				refinedComment = CodeCommentParser.parseCodeComments(refinedComment);
-				if(refinedComment.isEmpty())
-					continue;
+			for (Comment comment : node.getAllContainedComments()) 
+			{
+				String refinedComment = comment.getContent();
+				
+				//remove commented code
+				if(RemoveCodeComments) {				
+					refinedComment = CodeCommentParser.parseCodeComments(refinedComment);
+					if(refinedComment.isEmpty())
+						continue;
+				}
+				
+				comments.addAll(tokenizeName(refinedComment, true));
+			}			
+		}
+		
+		
+		if(UseLineComments) {  //only line comments search mode			
+			
+			for (LineComment comment : node.findAll(LineComment.class))
+			{
+				String refinedComment = comment.getContent();
+				
+				if(RemoveCodeComments) {  //remove commented code				
+					refinedComment = CodeCommentParser.parseCodeComments(refinedComment);
+					if(refinedComment.isEmpty())
+						continue;
+				}
+				
+				comments.addAll(tokenizeName(refinedComment, true));
 			}
+		}
+		
+		if(UseBlockComment) {  //only block comments search mode			
+					
+			for (BlockComment comment : node.findAll(BlockComment.class))
+			{
+				String refinedComment = comment.getContent();
+				
+				if(RemoveCodeComments) {  //remove commented code				
+					refinedComment = CodeCommentParser.parseCodeComments(refinedComment);
+					if(refinedComment.isEmpty())
+						continue;
+				}
+				
+				comments.addAll(tokenizeName(refinedComment, true));
+			}
+		}
+		
+		if(UseJavadocComment) {  //only java doc comments search mode			
 			
-			comments.addAll(tokenizeName(refinedComment, true));
+			for (JavadocComment comment : node.findAll(JavadocComment.class))
+			{
+				String refinedComment = comment.getContent();
+				
+				if(RemoveCodeComments) {  //remove commented code				
+					refinedComment = CodeCommentParser.parseCodeComments(refinedComment);
+					if(refinedComment.isEmpty())
+						continue;
+				}
+				
+				comments.addAll(tokenizeName(refinedComment, true));
+			}
 		}
 				
 		//if artefact also needs to be considered add it to the final data 
@@ -89,7 +168,7 @@ public class FileParser {
 		
 		// prepare document for each FL techniques
 		vsmFL.prepareDocument(fileName, comments);
-		lsiFL.prepareDocument(fileName, comments);			
+		//lsiFL.prepareDocument(fileName, comments);			
 		
 		artefact.clear();
 		comments.clear();
@@ -115,10 +194,6 @@ public class FileParser {
 		public void visit(FieldDeclaration av, Void arg)  
 		{	
 			super.visit(av, arg);
-			
-			av.getModifiers().forEach(mod-> {
-				artefact.addAll(tokenizeName(mod.toString(), false));
-			});
 			
 			av.getVariables().forEach(var-> {
 				artefact.addAll(tokenizeName(var.getNameAsString(), false));
@@ -152,8 +227,8 @@ public class FileParser {
 			artefact.addAll(tokenizeName(av.getNameAsString(), false));
 		}		
 	}
-		
 	
+		
 	private static List<String> tokenizeName(String name, boolean removePunct)
 	{
 		//camel case split

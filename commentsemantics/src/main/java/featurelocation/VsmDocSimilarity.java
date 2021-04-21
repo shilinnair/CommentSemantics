@@ -83,15 +83,14 @@ public class VsmDocSimilarity implements FeatureLocation
 		}	
 	}
 	
-	public List<String> getSimilarDocuments(String fileName) throws IOException
+	public List<String> vsmGetSimilarDocuments(String fileName) throws IOException
 	{	
 		List<String> similarDocuments = new ArrayList<String>();
 		
 		if (writer.isOpen())
 			writer.close();
 
-		IndexReader reader = DirectoryReader.open(directory);
-		
+		IndexReader reader = DirectoryReader.open(directory);		
 
 		List<RealVector> realVectors = new ArrayList<RealVector>();
 		ArrayList<String> allTerms = getAllTerms(reader);
@@ -114,7 +113,6 @@ public class VsmDocSimilarity implements FeatureLocation
 
 		for (int i = 0; i < realVectors.size(); i++) 
 		{
-
 			if (i == fileindex)
 				continue; // do not compare self
 
@@ -132,23 +130,36 @@ public class VsmDocSimilarity implements FeatureLocation
 		List<Double> sortedCosine = new ArrayList<Double>(cosineMap.keySet());
 		Collections.sort(sortedCosine);
 
+		System.out.println("Finding similar documents to: " + reader.document(fileindex).getField("filename").stringValue());
+		
 		similarDocuments.add(reader.document(fileindex).getField("filename").stringValue());
 
-		System.out.println(
-				"Finding similar documents to: " + reader.document(fileindex).getField("filename").stringValue());
-
-		if (sortedCosine.size() > 0 && sortedCosine.get(sortedCosine.size() - 1) > 0) { // do not add if cosine value is
-																						// zero
+		if (sortedCosine.size() > 0 && sortedCosine.get(sortedCosine.size() - 1) > 0) { // do not add if cosine value is zero
+			
 			Double cos_key1 = sortedCosine.get(sortedCosine.size() - 1);
 			similarDocuments.add(reader.document(cosineMap.get(cos_key1)).getField("filename").stringValue());
 			System.out.println("document 1 cosine score:" + cos_key1);
 		}
 
-		if (sortedCosine.size() > 1 && sortedCosine.get(sortedCosine.size() - 2) > 0) { // do not add if cosine value is
-																						// zero
+		if (sortedCosine.size() > 1 && sortedCosine.get(sortedCosine.size() - 2) > 0) { // do not add if cosine value is zero
+			
 			Double cos_key2 = sortedCosine.get(sortedCosine.size() - 2);
 			similarDocuments.add(reader.document(cosineMap.get(cos_key2)).getField("filename").stringValue());
 			System.out.println("document 2 cosine score:" + cos_key2);
+		}
+		
+		if (sortedCosine.size() > 2 && sortedCosine.get(sortedCosine.size() - 3) > 0) { // do not add if cosine value is zero
+			
+			Double cos_key3 = sortedCosine.get(sortedCosine.size() - 3);
+			similarDocuments.add(reader.document(cosineMap.get(cos_key3)).getField("filename").stringValue());
+			System.out.println("document 3 cosine score:" + cos_key3);
+		}
+		
+		if (sortedCosine.size() > 3 && sortedCosine.get(sortedCosine.size() - 4) > 0) { // do not add if cosine value is zero
+					
+			Double cos_key4 = sortedCosine.get(sortedCosine.size() - 4);
+			similarDocuments.add(reader.document(cosineMap.get(cos_key4)).getField("filename").stringValue());
+			System.out.println("document 4 cosine score:" + cos_key4);
 		}
 		
 		System.out.println("Similar documets are:");

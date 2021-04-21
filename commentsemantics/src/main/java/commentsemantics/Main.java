@@ -11,8 +11,6 @@ import parser.ProjectParser;
 
 public class Main {
 	
-	
-	
 	private static void beginParsing()
 	{		
 		VsmDocSimilarity vsmDocSimilarity = new VsmDocSimilarity();
@@ -20,9 +18,8 @@ public class Main {
 		LsiFeatureLocation lsiFL = new LsiFeatureLocation();
 		
 		FileParser fileParser = new FileParser();
-		fileParser.includeArtefact(false);
-		fileParser.setLsiObject(lsiFL);
-		fileParser.setVsmObject(vsmFL);
+		fileParser.setVsmFL(vsmFL);
+		fileParser.setUseJavadocComment(true);
 		
 		ProjectParser projParser = new ProjectParser(fileParser);
 		
@@ -32,7 +29,7 @@ public class Main {
 		
 		
 		try {
-			lsiFL.querySearch("block line java");
+			vsmFL.vsmQuerySearch("block line java");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
