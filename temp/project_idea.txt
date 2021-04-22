@@ -100,34 +100,27 @@ FYI from farshad
 --------------------
 Do the following evaluations.
 
-Ev1: VSM on Comment
+Experiments: (VSM, LSI)
 
-Ev2: VSM on JavaDoc
+Gold set: Only comments
+Line comments: You need a performance measurement. E.g., 65% accuracy
+Block comments: “”””””””” ………… E.g., 55%
+JavaDoc comments: “””””””””: 80%
+Entire comments: “”””””””””: 40%
 
-Ev3: VSM on Comment-block
+Repeat all above when the code commented are excluded:
+Line comments: You need a performance measurement. E.g., 76% accuracy
+Block comments: “”””””””” ………… E.g., 50%
+JavaDoc comments: “””””””””: 60%
+Entire comments: “”””””””””: 45%
 
-Ev4: VSM on Line-Comment
+VSM with similarity: how the results are matching, accuracy results.
 
-Ev4.2: VSM without commented code
-
+Gold set: Comments and Artefacts:
+Entire comments + Artefact (Class name + Method name + Method Parameters + Class-Field Dec)
+best result from above comments section + artefact (Class name + Method name + Method Parameters + Class-Field Dec)
  
-
-Ev1: LSI on Comment
-
-Ev2: LSI on JavaDoc
-
-Ev3: LSI on Comment-block
-
-Ev4: LSI on Line-Comment
-
-Ev4.2: LSI without commented code
-
- 
-If all experiments above are done properly, you may consider the following as well to check the natural similarities between the results obtained from query search.
-
-using vsm get 1 java file reslt.
-using that find the simlairty dcumenet (say 5 files)
-now rerun the query and get the 5 files from the original result and see are ve getting those resuls.
-those files are in the gold set? if some not found, coulude they are similar for the artefacts but not the code.
+evauation matrixes : Precision and Recall 
 
 
+documetation - design sectinion : how I have desigedn the project using these concepts ( lsi, vsi, only coments, line comments etc)
