@@ -124,3 +124,6 @@ evauation matrixes : Precision and Recall
 
 
 documetation - design sectinion : how I have desigedn the project using these concepts ( lsi, vsi, only coments, line comments etc)
+
+Put theory in the documebts. concept behind VSM, LSI, NLP procssing of comments etc.
+(in the backgound section)
