@@ -76,7 +76,7 @@ public class LsiFeatureLocation implements FeatureLocation
 			testdata.mkdir();			
 	}
 	
-	public List<String> querySearch(String query) throws IOException
+	public List<String> LsiQuerySearch(String query) throws IOException
 	{	
 		List<String> docs = new ArrayList<String>();
 		

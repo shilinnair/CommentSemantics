@@ -29,7 +29,7 @@ public class Main {
 		
 		
 		try {
-			vsmFL.vsmQuerySearch("block line java");
+			vsmFL.VsmQuerySearch("block line java");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -40,9 +40,9 @@ public class Main {
 	{
 		System.out.println("Launching the application..");
 		
-		//new UserScreen().showUI();
+		new UserScreen().showUI();
 		
-		beginParsing();
+		//beginParsing();
 	
 		
 	}

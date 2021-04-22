@@ -1,9 +1,12 @@
 package parser;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -20,22 +23,59 @@ import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.comments.LineComment;
-import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.github.javaparser.javadoc.Javadoc;
 
 import featurelocation.FeatureLocation;
 
 public class FileParser {
 	
-	private final static String [] RESERVED_WORDS = {"about", "again", "all", "am", "an", "and", "any", "are", "array", "as", "at", "be", "because", "been", "before", "below", "between", "both", "but", "by", "cannot", "class", "could", "did", "do", "does", "down", "double", "each", "few", "for", "from", "further", "get", "had", "has", "have", "he", "her", "here", "hers", "herself", "him", "himself", "his", "how", "if", "in", "int", "integer", "into", "is", "it", "its", "itself", "list", "me", "more", "most", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "our", "ours", "ourselves", "out", "over", "own", "same", "set", "she", "should", "so", "some", "string", "such", "than", "that", "the", "their", "theirs", "them", "themselves", "then", "there", "these", "they", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why", "with", "would", "you", "your", "yours", "yourself", "yourselves", "String"};
+	//private final static String [] RESERVED_WORDS = {"about", "again", "all", "am", "an", "and", "any", "are", "array", "as", "at", "be", "because", "been", "before", "below", "between", "both", "but", "by", "cannot", "class", "could", "did", "do", "does", "down", "double", "each", "few", "for", "from", "further", "get", "had", "has", "have", "he", "her", "here", "hers", "herself", "him", "himself", "his", "how", "if", "in", "int", "integer", "into", "is", "it", "its", "itself", "list", "me", "more", "most", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "our", "ours", "ourselves", "out", "over", "own", "same", "set", "she", "should", "so", "some", "string", "such", "than", "that", "the", "their", "theirs", "them", "themselves", "then", "there", "these", "they", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why", "with", "would", "you", "your", "yours", "yourself", "yourselves", "String"};
+	
+	private final String JAVAKEYWORDS = "./data/javakeywords.txt";
+	private final String ENGLISHSTOPWORDS = "./data/stopwords.txt";
 	
 	private List<String> artefact = new ArrayList<String>(); // artifact tokens
 	private List<String> comments = new ArrayList<String>(); // comment tokens
 	
 	private FeatureLocation vsmFL;
 	private FeatureLocation lsiFL;
+	
+	private List<String> StopWords = new ArrayList<String>();
+	
+	public FileParser()
+	{
+		reset();
+		populateStopWords();		
+	}
+	
+	private void populateStopWords()
+	{		
+		//adding java keywords
+		try {
+			Scanner scanner = new Scanner(new File(JAVAKEYWORDS));
+			while (scanner.hasNextLine()) {
+				   String word = scanner.nextLine();				   
+				   this.StopWords.add(word.trim());
+				}
+		} catch (FileNotFoundException e) {			
+			e.printStackTrace();
+		}
+		
+		
+		//adding English stop words
+		try {
+			Scanner scanner = new Scanner(new File(ENGLISHSTOPWORDS));
+			while (scanner.hasNextLine()) {
+				   String word = scanner.nextLine();
+				   this.StopWords.add(word.trim());
+				}
+		} catch (FileNotFoundException e) {			
+			e.printStackTrace();
+		}		
+
+	}
+	
 	
 	public void setVsmFL(FeatureLocation vsmFL) {
 		this.vsmFL = vsmFL;
@@ -46,20 +86,20 @@ public class FileParser {
 		this.lsiFL = lsiFL;
 	}
 
-	private boolean UseArtefact = false;         // use artefact together with comments for feature location
-	private boolean UseFullComments = false;     // use all comments for feature location
+	private boolean UseAllComments = false;     // use all comments for feature location
 	private boolean UseLineComments = false;     // use only line comments for feature location 
 	private boolean UseBlockComment = false;     // use only block comments for feature location
 	private boolean UseJavadocComment = false;   // use only java doc comments for feature location
-	private boolean RemoveCodeComments = false;  // do not consider commented code for feature location   
+	private boolean RemoveCodeComments = false;  // do not consider commented code for feature location
+	private boolean IncludeArtefacts = false;    // use artefact with comments for feature location
 	
 	
-	public void setUseFullComments(boolean useFullComments) {
-		UseFullComments = useFullComments;
+	public void setUseAllComments(boolean useAllComments) {
+		UseAllComments = useAllComments;
 	}
 
-	public void setUseArtefact(boolean useArtefact) {
-		UseArtefact = useArtefact;
+	public void setIncludeArtefacts(boolean includeArtefacts) {
+		IncludeArtefacts = includeArtefacts;
 	}
 
 	public void setUseLineComments(boolean useLineComments) {
@@ -83,19 +123,20 @@ public class FileParser {
 	{
 		artefact.clear();
 		comments.clear();	
+		StopWords.clear();
 	}
 	
 
 	public void parseNode(String fileName, Node node, String parent) 
 	{
 		// find artifact tokens if enabled
-		if(UseArtefact) {
+		if(IncludeArtefacts) {
 			node.accept(new ArtefactVisitor(artefact), null);
 		}
 		
 		
 		// find comment tokens
-		if(UseFullComments) {   //full comment search mode
+		if(UseAllComments) {   //full comment search mode
 			
 			for (Comment comment : node.getAllContainedComments()) 
 			{
@@ -162,7 +203,7 @@ public class FileParser {
 		}
 				
 		//if artefact also needs to be considered add it to the final data 
-		if(UseArtefact) {
+		if(IncludeArtefacts) {
 			comments.addAll(artefact);
 		}
 		
@@ -229,7 +270,7 @@ public class FileParser {
 	}
 	
 		
-	private static List<String> tokenizeName(String name, boolean removePunct)
+	private List<String> tokenizeName(String name, boolean removePunct)
 	{
 		//camel case split
 		List<String> tokenList = camelCaseSplit(name);
@@ -279,7 +320,7 @@ public class FileParser {
 	}
 	
 	
-	private static List<String> tokenizer(String string)
+	private List<String> tokenizer(String string)
 	{
 		List<String> result = new ArrayList<String>();		
 
@@ -307,7 +348,7 @@ public class FileParser {
 		return result;
 	}
 	
-	private static List<String> camelCaseSplit(String string)
+	private List<String> camelCaseSplit(String string)
 	{		
 		String [] res = string.split("(?=[A-Z])");
 		
@@ -320,7 +361,7 @@ public class FileParser {
 		return splitStrings;
 	}
 	
-	private static List<String> snakeCaseSplit(String string)
+	private List<String> snakeCaseSplit(String string)
 	{		
 		String [] res = string.split("_");
 		
@@ -333,14 +374,14 @@ public class FileParser {
 		return splitStrings;
 	}
 	
-	private static String removeDigits(String string)
+	private String removeDigits(String string)
 	{		
 		return string.replaceAll("[0-9]", "");
 	}
 	
-	private static boolean isRservedWord(String string)
+	private boolean isRservedWord(String string)
 	{
-		for (String reserved : RESERVED_WORDS) {
+		for (String reserved : StopWords) {
 			if(string.equals(reserved))
 				return true;
 				
@@ -348,9 +389,9 @@ public class FileParser {
 		return false;		
 	}
 	
-	private static List<String> removePunctuation(String string)
+	private List<String> removePunctuation(String string)
 	{		
-		Pattern pattern = Pattern.compile("\\p{Punct}");
+		Pattern pattern = Pattern.compile("\\p{Punct}+|\\d+|\\s+");
 		String [] res = pattern.split(string);		
 		
 		List<String> splitStrings = new ArrayList<String>();

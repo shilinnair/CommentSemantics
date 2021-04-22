@@ -83,7 +83,7 @@ public class VsmFeatureLocation implements FeatureLocation
 		
 	}
 	
-	public List<String> vsmQuerySearch(String query) throws IOException
+	public List<String> VsmQuerySearch(String query) throws IOException
 	{
 		List<String> docs = new ArrayList<String>();
 		
