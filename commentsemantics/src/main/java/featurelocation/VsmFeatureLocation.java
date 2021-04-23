@@ -93,7 +93,7 @@ public class VsmFeatureLocation implements FeatureLocation
 		
 		try {
 
-			if (writer.isOpen())
+			//if (writer.isOpen())
 				writer.close();
 
 			IndexReader reader = DirectoryReader.open(directory);
@@ -105,8 +105,9 @@ public class VsmFeatureLocation implements FeatureLocation
 
 			// create the query object and search the document
 			results = searcher.search(parser.parse(query), 3);
+			
 
-			if (results.totalHits.value > 0) {
+			if (results.totalHits > 0) {
 				docs.add(reader.document(results.scoreDocs[0].doc).getField("filename").stringValue());		
 				
 				System.out.println("Query search returned top document: " + docs.get(0));
@@ -118,10 +119,10 @@ public class VsmFeatureLocation implements FeatureLocation
 				System.out.println("Query:" + query + "- No document matches the query!");
 			}
 
-			if (results.totalHits.value > 1) {
+			if (results.totalHits > 1) {
 				docs.add(reader.document(results.scoreDocs[1].doc).getField("filename").stringValue());				
 			}
-			if (results.totalHits.value > 2) {
+			if (results.totalHits > 2) {
 				docs.add(reader.document(results.scoreDocs[2].doc).getField("filename").stringValue());				
 			}
 			

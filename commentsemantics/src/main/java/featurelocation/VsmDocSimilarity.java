@@ -23,7 +23,8 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.similarities.ClassicSimilarity;
+import org.apache.lucene.search.similarities.DefaultSimilarity;
+//import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.search.similarities.TFIDFSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
@@ -87,8 +88,9 @@ public class VsmDocSimilarity implements FeatureLocation
 	{	
 		List<String> similarDocuments = new ArrayList<String>();
 		
-		if (writer.isOpen())
-			writer.close();
+		writer.close();
+		
+		//if (writer.isOpen())			
 
 		IndexReader reader = DirectoryReader.open(directory);		
 
@@ -178,7 +180,7 @@ public class VsmDocSimilarity implements FeatureLocation
 		if(vector == null)
 			return R_Vector;
 
-		TermsEnum terms = vector.iterator();
+		TermsEnum terms = vector.iterator(null);
 
 		int n=0;
 
@@ -186,7 +188,7 @@ public class VsmDocSimilarity implements FeatureLocation
 		{
 			n = allTerms.indexOf(terms.term().utf8ToString());
 	
-			TFIDFSimilarity  kk1 = new ClassicSimilarity();
+			TFIDFSimilarity  kk1 = new DefaultSimilarity();
 			Term term = new Term("data", terms.term().utf8ToString() );
 			
 			double tf_idf = kk1.idf(reader.docFreq(term), reader.numDocs())*kk1.tf(terms.totalTermFreq());
@@ -208,7 +210,7 @@ public class VsmDocSimilarity implements FeatureLocation
 			if(vector == null)
 				continue;
 	
-			TermsEnum terms = vector.iterator();		 
+			TermsEnum terms = vector.iterator(null);		 
 			while(terms.next() != null) {
 				allTerm.add(terms.term().utf8ToString());
 			}			

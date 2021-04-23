@@ -209,7 +209,7 @@ public class FileParser {
 		
 		// prepare document for each FL techniques
 		vsmFL.prepareDocument(fileName, comments);
-		//lsiFL.prepareDocument(fileName, comments);			
+		lsiFL.prepareDocument(fileName, comments);			
 		
 		artefact.clear();
 		comments.clear();

@@ -29,6 +29,7 @@ import javax.swing.JRadioButton;
 
 import parser.FileParser;
 import parser.ProjectParser;
+import queryresult.ResultStore;
 
 public class UserScreen 
 {
@@ -69,6 +70,8 @@ public class UserScreen
 	
 	FileParser fileParser = new FileParser();
 	ProjectParser projParser = new ProjectParser(fileParser);
+	
+	ResultStore resultStore = new ResultStore();
 	
 	public void showUI() 
 	{
@@ -162,6 +165,8 @@ public class UserScreen
 				
 				//user select
 				String query = text_query.getText();
+				
+				resultStore.OpenStore(query);
 				fileParser.reset();
 				
 				boolean removeCodeComments = check_removeCodeComments.isSelected();
@@ -186,22 +191,24 @@ public class UserScreen
 					
 					if(check_vsm.isSelected()) {
 						docs = vsmFL.VsmQuerySearch(query);
-						storeResults(query, docs);
+						resultStore.PersistVsmQueryResult(query, docs);
 					}
 					
 					if(check_lsi.isSelected()) {
 						docs = lsiFL.LsiQuerySearch(query);
-						storeResults(query, docs);
+						resultStore.PersistLsiQueryResult(query, docs);
 					}
 				} 
 				catch (IOException e) 
 				{
-					e.printStackTrace();
+					e.printStackTrace();					
 				}
-				
+				finally 
+				{
+					resultStore.CloseStore();
+				}				
 			}
 		});
-		
 		
 	}
 	

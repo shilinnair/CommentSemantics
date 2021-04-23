@@ -8,16 +8,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-
 import pitt.search.lucene.IndexFilePositions;
 import pitt.search.semanticvectors.BuildIndex;
 import pitt.search.semanticvectors.CloseableVectorStore;
@@ -30,8 +20,8 @@ import pitt.search.semanticvectors.VectorStoreReader;
 
 public class LsiFeatureLocation implements FeatureLocation 
 {
-	static final String DOCINDEX_PATH = "document_index";
-	static final String DOCFILE_PATH = "document_files";
+	static String DOCINDEX_PATH = "temp\\docindex";
+	static final String DOCFILE_PATH = "temp\\docfiles";
 	
 	public LsiFeatureLocation()
 	{
@@ -56,8 +46,9 @@ public class LsiFeatureLocation implements FeatureLocation
 
 	@Override
 	public void reset() 
-	{	
+	{		
 		//clean up index directory
+		boolean cleanIndex = true;
 		File index = new File(DOCINDEX_PATH);
 		
 		String[]entries = index.list();
@@ -65,17 +56,30 @@ public class LsiFeatureLocation implements FeatureLocation
 		{
 			for(String s: entries){
 			    File currentFile = new File(index.getPath(),s);
-			    currentFile.delete();
+			    cleanIndex &= currentFile.delete();
 			}
-			index.delete();
+			cleanIndex &= index.delete();
+		}
+		
+		if(!cleanIndex) {
+			Integer rand =  (int) ((Math.random()) * 100000);
+			DOCINDEX_PATH = "temp\\index" + rand.toString();			
 		}
 		
 		//create testdata path
 		File testdata = new File(DOCFILE_PATH);
-		if(!testdata.exists())
-			testdata.mkdir();			
+		if(!testdata.exists()) {
+			testdata.mkdirs();	
+		}
 		
+		//delete doc vec and term vec
+		File docVec = new File("docvectors.bin");
+		if(docVec.isFile())
+			docVec.delete();
 		
+		File termVec = new File("termvectors.bin");
+		if(termVec.isFile())
+			termVec.delete();
 	}
 	
 	public List<String> LsiQuerySearch(String query) throws IOException
@@ -83,17 +87,22 @@ public class LsiFeatureLocation implements FeatureLocation
 		List<String> docs = new ArrayList<String>();
 		
 		//Create document indexes from comments
-	    String testDataPath = DOCFILE_PATH;	    	    
-	    IndexFilePositions.main(new String[] {"-luceneindexpath", DOCINDEX_PATH, testDataPath});
-	   
+	    //String testDataPath = DOCFILE_PATH;
+	    String indexCommand = "-luceneindexpath " + DOCINDEX_PATH + " " + DOCFILE_PATH;
+	    //IndexFilePositions.main(new String[] {"-luceneindexpath", DOCINDEX_PATH, testDataPath});
+	    IndexFilePositions.main(indexCommand.split("\\s+"));
 	    
-	    String[] buildArgs = new String("-dimension 200 -luceneindexpath document_index").split("\\s+");
-		
+	    		
 		try {
-		      BuildIndex.main(buildArgs);
+			  
+			  String buildArgs = new String("-dimension 200 -luceneindexpath ") + DOCINDEX_PATH;
+		      BuildIndex.main(buildArgs.split("\\s+"));
 		      
 		      //method1
-		      String[] searchArgs = new String("-queryvectorfile termvectors.bin -searchvectorfile docvectors.bin -luceneindexpath document_index -numsearchresults 3 block line java").split("\\s+");
+		      String Args = new String("-queryvectorfile termvectors.bin -searchvectorfile docvectors.bin -luceneindexpath ");
+		      Args += DOCINDEX_PATH + " -numsearchresults 3 ";
+		      Args += query;
+		      String[] searchArgs = Args.split("\\s+");
 		      
 		      List<SearchResult> testresults = Search.runSearch(FlagConfig.getFlagConfig(searchArgs));
 		      for (SearchResult result : testresults) {

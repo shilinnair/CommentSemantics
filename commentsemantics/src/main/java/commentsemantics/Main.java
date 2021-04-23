@@ -19,6 +19,7 @@ public class Main {
 		
 		FileParser fileParser = new FileParser();
 		fileParser.setVsmFL(vsmFL);
+		fileParser.setLsiFL(lsiFL);
 		fileParser.setUseJavadocComment(true);
 		
 		ProjectParser projParser = new ProjectParser(fileParser);
@@ -29,7 +30,7 @@ public class Main {
 		
 		
 		try {
-			vsmFL.VsmQuerySearch("block line java");
+			lsiFL.LsiQuerySearch("block line java");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -38,6 +39,7 @@ public class Main {
 	
 	public static void main(String[] args) 
 	{
+		
 		System.out.println("Launching the application..");
 		
 		new UserScreen().showUI();
