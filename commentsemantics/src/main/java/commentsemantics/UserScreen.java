@@ -158,10 +158,12 @@ public class UserScreen
 			public void actionPerformed(ActionEvent arg0) {
 				
 				if(!validateInput(true))
-					return;
+					return;				
 				
 				//user select
 				String query = text_query.getText();
+				fileParser.reset();
+				
 				boolean removeCodeComments = check_removeCodeComments.isSelected();
 				boolean includeArtefacts = check_includeArtefacts.isSelected();
 				boolean allComments = radio_allcomments.isSelected();
@@ -175,7 +177,6 @@ public class UserScreen
 				fileParser.setUseLineComments(lineComments);
 				fileParser.setUseBlockComment(blockComments);
 				fileParser.setUseJavadocComment(docComments);
-				
 				
 				try 
 				{
@@ -236,11 +237,11 @@ public class UserScreen
 		{
 			FileWriter fw = new FileWriter(resultfile,true);
 			
-			fw.write("Query:" + query);
-			fw.write(System.lineSeparator());
-			fw.write("Search result:" + String.join(" ", docs));
+			fw.write("Query:" + query);			
+			fw.write(" | Search result:" + String.join(" ", docs));
 			fw.write(System.lineSeparator());
 			fw.write("================================================================================");
+			fw.write(System.lineSeparator());
 			fw.close();
 		}
 		catch (IOException e) 

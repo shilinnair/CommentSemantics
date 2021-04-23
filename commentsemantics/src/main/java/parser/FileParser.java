@@ -45,7 +45,6 @@ public class FileParser {
 	
 	public FileParser()
 	{
-		reset();
 		populateStopWords();		
 	}
 	
@@ -123,7 +122,8 @@ public class FileParser {
 	{
 		artefact.clear();
 		comments.clear();	
-		StopWords.clear();
+		vsmFL.reset();
+		lsiFL.reset();
 	}
 	
 

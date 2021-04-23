@@ -56,7 +56,7 @@ public class LsiFeatureLocation implements FeatureLocation
 
 	@Override
 	public void reset() 
-	{
+	{	
 		//clean up index directory
 		File index = new File(DOCINDEX_PATH);
 		
@@ -74,6 +74,8 @@ public class LsiFeatureLocation implements FeatureLocation
 		File testdata = new File(DOCFILE_PATH);
 		if(!testdata.exists())
 			testdata.mkdir();			
+		
+		
 	}
 	
 	public List<String> LsiQuerySearch(String query) throws IOException

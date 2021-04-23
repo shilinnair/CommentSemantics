@@ -62,6 +62,8 @@ public class VsmFeatureLocation implements FeatureLocation
 	@Override
 	public void reset() 
 	{
+		vsmDocSimilarity.reset();
+		
 		try {
 			standardAnalyzer = new StandardAnalyzer();
 			directory = new RAMDirectory();
