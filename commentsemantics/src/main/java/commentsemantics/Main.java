@@ -12,10 +12,10 @@ import parser.ProjectParser;
 public class Main {
 	
 	private static void beginParsing()
-	{		
-		VsmDocSimilarity vsmDocSimilarity = new VsmDocSimilarity();
-		VsmFeatureLocation vsmFL = new VsmFeatureLocation(vsmDocSimilarity);
+	{			
+		VsmFeatureLocation vsmFL = new VsmFeatureLocation();
 		LsiFeatureLocation lsiFL = new LsiFeatureLocation();
+		VsmDocSimilarity vsmDocSimilarity = new VsmDocSimilarity();
 		
 		FileParser fileParser = new FileParser();
 		fileParser.setVsmFL(vsmFL);

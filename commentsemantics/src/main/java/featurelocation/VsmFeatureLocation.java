@@ -21,17 +21,14 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 
 public class VsmFeatureLocation implements FeatureLocation 
-{
-	private VsmDocSimilarity vsmDocSimilarity;
-	
+{	
 	private StandardAnalyzer standardAnalyzer = null;
 	private Directory directory = null;
 	private IndexWriter writer = null;
 	private FieldType fieldType = null;
 
-	public VsmFeatureLocation(VsmDocSimilarity vsmDocSimilarity)
+	public VsmFeatureLocation()
 	{
-		this.vsmDocSimilarity = vsmDocSimilarity;
 		reset();
 	}
 
@@ -40,9 +37,6 @@ public class VsmFeatureLocation implements FeatureLocation
 	{
 		if(data.isEmpty())
 			return;
-		
-		//pass it on to doc similarity
-		vsmDocSimilarity.prepareDocument(fileName, data);
 		
 		Field field1 = new Field("filename", fileName, fieldType);
 		Field field2 = new Field("data", String.join(" ", data), fieldType);
@@ -61,9 +55,7 @@ public class VsmFeatureLocation implements FeatureLocation
 
 	@Override
 	public void reset() 
-	{
-		vsmDocSimilarity.reset();
-		
+	{		
 		try {
 			standardAnalyzer = new StandardAnalyzer();
 			directory = new RAMDirectory();
@@ -89,8 +81,6 @@ public class VsmFeatureLocation implements FeatureLocation
 	{
 		List<String> docs = new ArrayList<String>();
 		
-		List<String> similarDocs = null;
-		
 		try {
 
 			//if (writer.isOpen())
@@ -111,9 +101,6 @@ public class VsmFeatureLocation implements FeatureLocation
 				docs.add(reader.document(results.scoreDocs[0].doc).getField("filename").stringValue());		
 				
 				System.out.println("Query search returned top document: " + docs.get(0));
-				
-				//Now we have the top document matching the query. Find the similar document using the VSM cosine similarity.
-				similarDocs = vsmDocSimilarity.vsmGetSimilarDocuments(docs.get(0));
 			} 
 			else {
 				System.out.println("Query:" + query + "- No document matches the query!");
@@ -135,7 +122,7 @@ public class VsmFeatureLocation implements FeatureLocation
 		}
 
 		
-		if(!docs.isEmpty() && !similarDocs.isEmpty())
+		/*if(!docs.isEmpty() && !similarDocs.isEmpty())
 		{
 			//natural similarity comparison
 			System.out.println("Natural similarity of query results with vsm dcument similarity;");
@@ -153,6 +140,7 @@ public class VsmFeatureLocation implements FeatureLocation
 			}				
 				
 		}
+		*/
 		
 		return docs;
 	}

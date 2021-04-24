@@ -123,9 +123,7 @@ public class VsmDocSimilarity implements FeatureLocation
 				double cosineValue = rvInputFile.cosine(realVectors.get(i));
 				cosineMap.put(cosineValue, i);
 
-			} catch (ArithmeticException e) {
-				System.out.println("ArithmeticException - " + e.getMessage());
-			}
+			} catch (ArithmeticException e) { }
 		}
 
 		// we have the cosinemap ready, now find the highest similarity document

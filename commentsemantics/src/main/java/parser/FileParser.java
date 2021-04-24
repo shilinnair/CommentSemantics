@@ -40,6 +40,7 @@ public class FileParser {
 	
 	private FeatureLocation vsmFL;
 	private FeatureLocation lsiFL;
+	private FeatureLocation docSimilarity;
 	
 	private List<String> StopWords = new ArrayList<String>();
 	
@@ -84,6 +85,11 @@ public class FileParser {
 	{
 		this.lsiFL = lsiFL;
 	}
+	
+	public void setDocumentSimilarity(FeatureLocation docSimilarity)
+	{
+		this.docSimilarity = docSimilarity;
+	}
 
 	private boolean UseAllComments = false;     // use all comments for feature location
 	private boolean UseLineComments = false;     // use only line comments for feature location 
@@ -124,6 +130,7 @@ public class FileParser {
 		comments.clear();	
 		vsmFL.reset();
 		lsiFL.reset();
+		docSimilarity.reset();
 	}
 	
 
@@ -210,6 +217,7 @@ public class FileParser {
 		// prepare document for each FL techniques
 		vsmFL.prepareDocument(fileName, comments);
 		lsiFL.prepareDocument(fileName, comments);			
+		docSimilarity.prepareDocument(fileName, comments);
 		
 		artefact.clear();
 		comments.clear();

@@ -3,7 +3,6 @@ package commentsemantics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
@@ -58,10 +57,10 @@ public class UserScreen
 	
 	//non-UI elements
 	private String projDir 			 = "";
-	
-	VsmDocSimilarity vsmDocSimilarity = new VsmDocSimilarity();
-	VsmFeatureLocation vsmFL = new VsmFeatureLocation(vsmDocSimilarity);
+		
+	VsmFeatureLocation vsmFL = new VsmFeatureLocation();
 	LsiFeatureLocation lsiFL = new LsiFeatureLocation();
+	VsmDocSimilarity vsmDocSimilarity = new VsmDocSimilarity();
 	
 	FileParser fileParser = new FileParser();
 	ProjectParser projParser = new ProjectParser(fileParser);
@@ -129,6 +128,7 @@ public class UserScreen
 		//non-UI elements
 		fileParser.setVsmFL(vsmFL);
 		fileParser.setLsiFL(lsiFL);
+		fileParser.setDocumentSimilarity(vsmDocSimilarity);
 		
 				
 		myUI.setVisible(true);
@@ -187,11 +187,23 @@ public class UserScreen
 					if(check_vsm.isSelected()) {
 						docs = vsmFL.VsmQuerySearch(query);
 						resultStore.PersistVsmQueryResult(query, docs);
+						
+						//Find the similar document using the VSM cosine similarity for topdoc
+						if(docs.size() > 0) {
+							List<String> similarDocs = vsmDocSimilarity.vsmGetSimilarDocuments(docs.get(0));
+							resultStore.PersistSimilarDocResult(docs.get(0), similarDocs);
+						}
 					}
 					
 					if(check_lsi.isSelected()) {
 						docs = lsiFL.LsiQuerySearch(query);
 						resultStore.PersistLsiQueryResult(query, docs);
+						
+						//Find the similar document using the VSM cosine similarity for topdoc
+						if(docs.size() > 0) {
+							List<String> similarDocs = vsmDocSimilarity.vsmGetSimilarDocuments(docs.get(0));
+							resultStore.PersistSimilarDocResult(docs.get(0), similarDocs);
+						}
 					}
 				} 
 				catch (IOException e) 
@@ -225,31 +237,6 @@ public class UserScreen
 		}
 		
 		return true;
-	}
-	
-	private void storeResults(String query, List<String> docs)
-	{
-		File testdata = new File("./result/");
-		if(!testdata.exists())
-			testdata.mkdir();	
-		
-		String resultfile = "./result/" + query.replaceAll("\\s", "") + ".txt";
-		
-		try 
-		{
-			FileWriter fw = new FileWriter(resultfile,true);
-			
-			fw.write("Query:" + query);			
-			fw.write(" | Search result:" + String.join(" ", docs));
-			fw.write(System.lineSeparator());
-			fw.write("================================================================================");
-			fw.write(System.lineSeparator());
-			fw.close();
-		}
-		catch (IOException e) 
-		{		
-			e.printStackTrace();
-		}
 	}
 
 }

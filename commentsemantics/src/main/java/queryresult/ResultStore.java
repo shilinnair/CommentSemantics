@@ -55,15 +55,20 @@ public class ResultStore
 	{
 		WriteData("LSI");
 		WriteData("Query:" + query);			
-		WriteData("Search result:" + String.join(" ", docs));		
-		WriteData("================================================================================");		
+		WriteData("Result:" + String.join(" ", docs));				
 	}
 	
 	public void PersistVsmQueryResult(String query, List<String> docs)
 	{
 		WriteData("VSM");
 		WriteData("Query:" + query);			
-		WriteData("Search result:" + String.join(" ", docs));		
-		WriteData("================================================================================");		
+		WriteData("Result:" + String.join(" ", docs));				
+	}
+
+	public void PersistSimilarDocResult(String topDoc, List<String> similarDocs) 
+	{		
+		WriteData("TopDoc:" + topDoc);
+		WriteData("Similarity:" + String.join(" ", similarDocs));
+		WriteData("================================================================================");	
 	}
 }
