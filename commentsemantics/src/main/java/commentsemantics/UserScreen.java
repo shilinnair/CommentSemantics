@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -16,16 +15,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
-import org.netlib.util.booleanW;
+import javax.swing.JRadioButton;
 
 import featurelocation.LsiFeatureLocation;
 import featurelocation.VsmDocSimilarity;
 import featurelocation.VsmFeatureLocation;
-
-import javax.swing.JRadioButton;
 
 import parser.FileParser;
 import parser.ProjectParser;

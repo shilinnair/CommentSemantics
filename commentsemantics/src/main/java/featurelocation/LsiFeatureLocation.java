@@ -5,23 +5,25 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import pitt.search.lucene.IndexFilePositions;
-import pitt.search.semanticvectors.BuildIndex;
-import pitt.search.semanticvectors.CloseableVectorStore;
+import pitt.search.semanticvectors.DocVectors;
 import pitt.search.semanticvectors.FlagConfig;
 import pitt.search.semanticvectors.LuceneUtils;
 import pitt.search.semanticvectors.Search;
 import pitt.search.semanticvectors.SearchResult;
-import pitt.search.semanticvectors.VectorSearcher;
-import pitt.search.semanticvectors.VectorStoreReader;
+import pitt.search.semanticvectors.TermVectorsFromLucene;
+import pitt.search.semanticvectors.VectorStore;
+import pitt.search.semanticvectors.VectorStoreRAM;
+import pitt.search.semanticvectors.VectorStoreWriter;
 
 public class LsiFeatureLocation implements FeatureLocation 
 {
 	static String DOCINDEX_PATH = "temp\\docindex";
-	static final String DOCFILE_PATH = "temp\\docfiles";
+	static String DOCFILE_PATH  = "temp\\docfiles";
+	static String TERM_VECTOR   = "temp\\termvectors.bin";
+	static String DOC_VECTOR    = "temp\\docvectors.bin";	
 	
 	public LsiFeatureLocation()
 	{
@@ -47,93 +49,133 @@ public class LsiFeatureLocation implements FeatureLocation
 	@Override
 	public void reset() 
 	{		
-		//clean up index directory
-		boolean cleanIndex = true;
-		File index = new File(DOCINDEX_PATH);
-		
-		String[]entries = index.list();
-		if(entries != null) 
-		{
-			for(String s: entries){
-			    File currentFile = new File(index.getPath(),s);
-			    cleanIndex &= currentFile.delete();
+		try {
+			
+			Integer rand = (int) ((Math.random()) * 100000);
+			String randomName = rand.toString();
+			
+			//clean up doc directory
+			File dataDir = new File(DOCFILE_PATH);			
+			String[] entries = dataDir.list();
+			
+			if (entries != null) {
+				for (String s : entries) {
+					File currentFile = new File(dataDir.getPath(), s);
+					currentFile.delete();
+				}
+				dataDir.delete();
+			}			
+			
+			//create doc dir
+			DOCFILE_PATH = "temp\\doc" + randomName;
+			File docDir = new File(DOCFILE_PATH);
+			if (!docDir.exists()) 
+			{
+				docDir.mkdirs();
 			}
-			cleanIndex &= index.delete();
+		
+			// clean up index directory
+			File index = new File(DOCINDEX_PATH);		
+			String[] files = index.list();
+			
+			if (files != null) {
+				for (String file : files) {
+					File currentFile = new File(index.getPath(), file);
+					currentFile.delete();
+				}
+				index.delete();
+			}
+		
+			// create Lucene Index dir			
+			DOCINDEX_PATH = "temp\\index" + randomName;
+
+			// delete doc vec and term vec
+			File docVec = new File(DOC_VECTOR);
+			if (docVec.isFile()) {
+				docVec.delete();
+			}
+
+			File termVec = new File(TERM_VECTOR);
+			if (termVec.isFile()) {
+				termVec.delete();
+			}
+			
+			//new term and doc vectors
+			TERM_VECTOR = "temp\\term" + randomName + ".bin";
+			DOC_VECTOR  = "temp\\doc" + randomName + ".bin";
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		if(!cleanIndex) {
-			Integer rand =  (int) ((Math.random()) * 100000);
-			DOCINDEX_PATH = "temp\\index" + rand.toString();			
-		}
-		
-		//create testdata path
-		File testdata = new File(DOCFILE_PATH);
-		if(!testdata.exists()) {
-			testdata.mkdirs();	
-		}
-		
-		//delete doc vec and term vec
-		File docVec = new File("docvectors.bin");
-		if(docVec.isFile())
-			docVec.delete();
-		
-		File termVec = new File("termvectors.bin");
-		if(termVec.isFile())
-			termVec.delete();
 	}
 	
-	public List<String> LsiQuerySearch(String query) throws IOException
-	{	
+	public List<String> LsiQuerySearch(String query) throws IOException 
+	{
 		List<String> docs = new ArrayList<String>();
-		
-		//Create document indexes from comments
-	    //String testDataPath = DOCFILE_PATH;
-	    String indexCommand = "-luceneindexpath " + DOCINDEX_PATH + " " + DOCFILE_PATH;
-	    //IndexFilePositions.main(new String[] {"-luceneindexpath", DOCINDEX_PATH, testDataPath});
-	    IndexFilePositions.main(indexCommand.split("\\s+"));
-	    
-	    		
-		try {
-			  
-			  String buildArgs = new String("-dimension 200 -luceneindexpath ") + DOCINDEX_PATH;
-		      BuildIndex.main(buildArgs.split("\\s+"));
-		      
-		      //method1
-		      String Args = new String("-queryvectorfile termvectors.bin -searchvectorfile docvectors.bin -luceneindexpath ");
-		      Args += DOCINDEX_PATH + " -numsearchresults 3 ";
-		      Args += query;
-		      String[] searchArgs = Args.split("\\s+");
-		      
-		      List<SearchResult> testresults = Search.runSearch(FlagConfig.getFlagConfig(searchArgs));
-		      for (SearchResult result : testresults) {
-		          String filename = (String) result.getObjectVector().getObject();
-		          System.out.println("score:" + result.getScore() + "  file:" + filename);
-		          
-		          docs.add(filename);
-		      }
-		      
-		      
-		      //method2
-		      FlagConfig config = FlagConfig.getFlagConfig(searchArgs);
-		      CloseableVectorStore queryVecReader = VectorStoreReader.openVectorStore(config.termvectorsfile(), config); 
-		      CloseableVectorStore resultsVecReader = VectorStoreReader.openVectorStore(config.docvectorsfile(), config);
-		      LuceneUtils luceneUtils = new LuceneUtils(config);; 
-		      VectorSearcher  vecSearcher = new VectorSearcher.VectorSearcherCosine( 
-		                      queryVecReader, resultsVecReader, luceneUtils, config, new String[] {"block", "line", "java"}); 
-		      LinkedList<SearchResult> results1 = vecSearcher.getNearestNeighbors(3);
 
-		      for (SearchResult result: results1) {
-		        System.out.println(String.format(
-		            "%f:%s",
-		            result.getScore(),
-		            result.getObjectVector().getObject().toString()));
-		      }	      
-		      
+		try {
+			
+			//build position indexes from tokens
+			String indexCommand = "-luceneindexpath " + DOCINDEX_PATH + " " + DOCFILE_PATH;
+			IndexFilePositions.main(indexCommand.split("\\s+"));
+			
+			//build document and term vectors
+			buildTermDocVectors();
+
+			String Args = new String("-queryvectorfile ") + TERM_VECTOR;
+			Args += " -searchvectorfile " + DOC_VECTOR;
+			Args += " -luceneindexpath " + DOCINDEX_PATH;
+			Args += " -numsearchresults 3 " + query;
+			String[] searchArgs = Args.split("\\s+");
+
+			List<SearchResult> testresults = Search.runSearch(FlagConfig.getFlagConfig(searchArgs));
+			for (SearchResult result : testresults) {
+				String fullPath = (String) result.getObjectVector().getObject();
+				String fileName = fullPath.substring(fullPath.lastIndexOf("\\") + 1);
+				
+				System.out.println("score:" + result.getScore() + "  file:" + fileName);
+				docs.add(fileName);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		catch (Exception e) {
-		      e.printStackTrace();
-		}
-		
+
 		return docs;
+	}
+	
+	private void buildTermDocVectors() throws IOException
+	{
+		String buildArgs = new String("-dimension 200 -luceneindexpath ") + DOCINDEX_PATH;
+
+		FlagConfig flagConfig;
+		flagConfig = FlagConfig.getFlagConfig(buildArgs.split("\\s+"));
+		LuceneUtils utils = new LuceneUtils(flagConfig);
+
+		// build term vector Indexer
+		TermVectorsFromLucene termVectorIndexer;
+		if (!flagConfig.initialtermvectors().isEmpty()) {
+			termVectorIndexer = TermVectorsFromLucene.createTermBasedRRIVectors(flagConfig);
+		} else {
+			VectorStore initialDocVectors = null;
+			if (!flagConfig.initialdocumentvectors().isEmpty()) {
+				initialDocVectors = VectorStoreRAM.readFromFile(flagConfig, flagConfig.initialdocumentvectors());
+			}
+
+			termVectorIndexer = TermVectorsFromLucene.createTermVectorsFromLucene(flagConfig, initialDocVectors);
+		}
+
+		// build doc vector Indexer
+		DocVectors docVectors = new DocVectors(termVectorIndexer.getSemanticTermVectors(), flagConfig, utils);
+		for (int i = 1; i < flagConfig.trainingcycles(); ++i) {
+			termVectorIndexer = TermVectorsFromLucene.createTermVectorsFromLucene(flagConfig, docVectors);
+			docVectors = new DocVectors(termVectorIndexer.getSemanticTermVectors(), flagConfig, utils);
+		}
+
+		// write term and doc vector store
+		VectorStore writeableDocVectors = docVectors.makeWriteableVectorStore();
+		VectorStoreWriter.writeVectors(TERM_VECTOR, flagConfig, termVectorIndexer.getSemanticTermVectors());
+		VectorStoreWriter.writeVectors(DOC_VECTOR, flagConfig, writeableDocVectors);
 	}
 }
