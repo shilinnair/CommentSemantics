@@ -4,7 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -23,6 +25,7 @@ import featurelocation.VsmFeatureLocation;
 
 import parser.FileParser;
 import parser.ProjectParser;
+import queryresult.GoldSetEvaluator;
 import queryresult.ResultStore;
 
 public class UserScreen 
@@ -31,6 +34,8 @@ public class UserScreen
 	
 	static JButton button1 = new JButton("Browse Project");
 	static JButton queryButton = new JButton("Run Query");
+	
+	static JCheckBox check_goldsetEvaluation = new JCheckBox("Goldset Evaluation Mode");
 	
 	static JCheckBox check_removeCodeComments = new JCheckBox("Remove Code-Comments");
 	static JCheckBox check_includeArtefacts = new JCheckBox("Include Artefacts");
@@ -66,6 +71,7 @@ public class UserScreen
 	ProjectParser projParser = new ProjectParser(fileParser);
 	
 	ResultStore resultStore = new ResultStore();
+	GoldSetEvaluator goldsetEvaluator = new GoldSetEvaluator(resultStore);
 	
 	public void showUI() 
 	{
@@ -80,9 +86,12 @@ public class UserScreen
 		button1.setBounds(50, 40, 140, 25);
 		contentPane.add(button1);
 		
+		check_goldsetEvaluation.setBounds(200, 43, 180, 20);
+		contentPane.add(check_goldsetEvaluation);
+		
 		l3.setBounds(50, 90, 300, 20);
 		contentPane.add(l3);
-		text_query.setBounds(50, 110, 300, 20);
+		text_query.setBounds(50, 110, 305, 20);
 		contentPane.add(text_query);
 		
 		check_removeCodeComments.setBounds(48, 130, 180, 20);
@@ -133,6 +142,22 @@ public class UserScreen
 				
 		myUI.setVisible(true);
 		
+		//Goldset evaluation mode
+		check_goldsetEvaluation.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {		
+				if(check_goldsetEvaluation.isSelected()) {
+					button1.setEnabled(false);
+					text_query.setEditable(false);
+				}
+				else {
+					button1.setEnabled(true);
+					text_query.setEditable(true);
+				}
+			}
+		});
+		
 		//Browse directory
 		button1.addActionListener(new ActionListener() 
 		{
@@ -154,68 +179,144 @@ public class UserScreen
 		queryButton.addActionListener(new ActionListener() 
 		{	
 			public void actionPerformed(ActionEvent arg0) {
-				
-				if(!validateInput(true))
-					return;				
-				
-				//user select
-				String query = text_query.getText();
-				
-				resultStore.OpenStore(query);
-				fileParser.reset();
-				
-				boolean removeCodeComments = check_removeCodeComments.isSelected();
-				boolean includeArtefacts = check_includeArtefacts.isSelected();
-				boolean allComments = radio_allcomments.isSelected();
-				boolean lineComments = radio_linecomments.isSelected();
-				boolean blockComments = radio_blockcomments.isSelected();
-				boolean docComments = radio_doccomments.isSelected();
-				
-				fileParser.setRemoveCodeComments(removeCodeComments);
-				fileParser.setIncludeArtefacts(includeArtefacts);
-				fileParser.setUseAllComments(allComments);
-				fileParser.setUseLineComments(lineComments);
-				fileParser.setUseBlockComment(blockComments);
-				fileParser.setUseJavadocComment(docComments);
-				
-				try 
+								
+				if(check_goldsetEvaluation.isSelected()) //goldset evaluation mode, pre-configured project path
 				{
-					projParser.parseProject(new File(projDir));	
+					projDir = GoldSetEvaluator.Goldset_Src;
 					
-					List<String> docs = null;
+					parseProject();					
+					lsiFL.buildSemanticVectors();
 					
-					if(check_vsm.isSelected()) {
-						docs = vsmFL.VsmQuerySearch(query);
-						resultStore.PersistVsmQueryResult(query, docs);
+					for(Map.Entry<Integer, String> entry : goldsetEvaluator.GetQueries().entrySet())
+					{
+						resultStore.OpenStore(entry.getKey().toString());
 						
-						//Find the similar document using the VSM cosine similarity for topdoc
-						if(docs.size() > 0) {
-							List<String> similarDocs = vsmDocSimilarity.vsmGetSimilarDocuments(docs.get(0));
-							resultStore.PersistSimilarDocResult(docs.get(0), similarDocs);
+						runQuery(entry.getKey(), entry.getValue());
+						
+						resultStore.CloseStore();
+						
+						try {
+							Thread.sleep(300);  // a litle delay b/w each qury execution
+						} catch (InterruptedException e) {
+							e.printStackTrace();
 						}
 					}
 					
-					if(check_lsi.isSelected()) {
-						docs = lsiFL.LsiQuerySearch(query);
-						resultStore.PersistLsiQueryResult(query, docs);
-						
-						//Find the similar document using the VSM cosine similarity for topdoc
-						if(docs.size() > 0) {
-							List<String> similarDocs = vsmDocSimilarity.vsmGetSimilarDocuments(docs.get(0));
-							resultStore.PersistSimilarDocResult(docs.get(0), similarDocs);
-						}
-					}
-				} 
-				catch (IOException e) 
-				{
-					e.printStackTrace();					
-				}
-				finally 
-				{
+					resultStore.OpenStore("FinalResult");
+					goldsetEvaluator.printFinalScore(ExecutionName());
 					resultStore.CloseStore();
-				}				
+				}
+				else  //running for non gold set
+				{	
+					if(!validateInput(true))
+						return;
+					
+					parseProject();
+					if(check_lsi.isSelected())
+						lsiFL.buildSemanticVectors();
+					
+					String query = text_query.getText();
+					resultStore.OpenStore(query);
+					
+					runQuery(0, query);
+					
+					resultStore.CloseStore();
+				}										
 			}
 		});
+		
+	}
+	
+	private String ExecutionName()
+	{
+		String execName = "";
+		
+		if(radio_allcomments.isSelected())
+			execName = "All Comments";
+		else if(radio_linecomments.isSelected())
+			execName = "Line Comments";
+		else if(radio_blockcomments.isSelected())
+			execName = "Block Comments";
+		else if(radio_doccomments.isSelected())
+			execName = "JavaDoc Comments";
+		
+		if(check_includeArtefacts.isSelected())
+			execName += " & Artefacts";
+		
+		if(check_removeCodeComments.isSelected())
+			execName += "-Code comments removed";
+		
+		return execName;
+	}
+	
+	private void parseProject()
+	{
+		fileParser.reset();
+		goldsetEvaluator.Reset();
+		
+		boolean removeCodeComments = check_removeCodeComments.isSelected();
+		boolean includeArtefacts = check_includeArtefacts.isSelected();
+		boolean allComments = radio_allcomments.isSelected();
+		boolean lineComments = radio_linecomments.isSelected();
+		boolean blockComments = radio_blockcomments.isSelected();
+		boolean docComments = radio_doccomments.isSelected();
+		
+		fileParser.setRemoveCodeComments(removeCodeComments);
+		fileParser.setIncludeArtefacts(includeArtefacts);
+		fileParser.setUseAllComments(allComments);
+		fileParser.setUseLineComments(lineComments);
+		fileParser.setUseBlockComment(blockComments);
+		fileParser.setUseJavadocComment(docComments);
+		
+		projParser.parseProject(new File(projDir));
+	}
+	
+	private void runQuery(Integer queryNumber, String query)
+	{
+		List<String> docs = new ArrayList<String>();
+		List<String> similarDocs = new ArrayList<String>();
+		
+		try 
+		{
+			resultStore.WriteData("Query:" + query);
+			
+			if(check_vsm.isSelected()) {
+				docs = vsmFL.VsmQuerySearch(query);
+				resultStore.PersistVsmQueryResult(docs);
+				
+				//Find the similar document using the VSM cosine similarity for topdoc
+				if(docs.size() > 0) {
+					similarDocs = vsmDocSimilarity.vsmGetSimilarDocuments(docs.get(0));
+					resultStore.PersistSimilarDocResult(similarDocs);
+				}
+				
+				if(queryNumber != 0) {
+					goldsetEvaluator.EvaluateQueryResult(GoldSetEvaluator.FLType.VSM, queryNumber, docs);
+					goldsetEvaluator.EvaluateSimilairyResult(GoldSetEvaluator.FLType.VSM, similarDocs, docs);
+				}
+			}
+			
+			if(check_lsi.isSelected()) {
+				docs = lsiFL.LsiQuerySearch(query);
+				resultStore.PersistLsiQueryResult(docs);
+				
+				//Find the similar document using the VSM cosine similarity for topdoc
+				if(docs.size() > 0) {
+					similarDocs = vsmDocSimilarity.vsmGetSimilarDocuments(docs.get(0));
+					resultStore.PersistSimilarDocResult(similarDocs);
+				}
+				
+				if(queryNumber != 0) {
+					goldsetEvaluator.EvaluateQueryResult(GoldSetEvaluator.FLType.LSI, queryNumber, docs);
+					goldsetEvaluator.EvaluateSimilairyResult(GoldSetEvaluator.FLType.LSI, similarDocs, docs);
+				}
+			}
+			resultStore.PrintLineSeperator();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();					
+		}						
 		
 	}
 	

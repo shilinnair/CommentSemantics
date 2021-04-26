@@ -9,13 +9,13 @@ public class ResultStore
 {
 	private FileWriter Writer; 
 	
-	public void OpenStore(String path)
+	public void OpenStore(String name)
 	{
 		File resultDir = new File("./result/");
 		if(!resultDir.exists())
 			resultDir.mkdir();	
 		
-		String fileName = "./result/" + path.replaceAll("\\s", "") + ".txt";
+		String fileName = "./result/" + name.replaceAll("\\s", "") + ".txt";
 		
 		try 
 		{
@@ -51,24 +51,23 @@ public class ResultStore
 	}
 	
 	
-	public void PersistLsiQueryResult(String query, List<String> docs)
-	{
-		WriteData("LSI");
-		WriteData("Query:" + query);			
-		WriteData("Result:" + String.join(" ", docs));				
+	public void PersistLsiQueryResult(List<String> docs)
+	{					
+		WriteData("LSIResult:" + String.join(" ", docs));				
 	}
 	
-	public void PersistVsmQueryResult(String query, List<String> docs)
-	{
-		WriteData("VSM");
-		WriteData("Query:" + query);			
-		WriteData("Result:" + String.join(" ", docs));				
+	public void PersistVsmQueryResult(List<String> docs)
+	{		
+		WriteData("VSMResult:" + String.join(" ", docs));				
 	}
 
-	public void PersistSimilarDocResult(String topDoc, List<String> similarDocs) 
+	public void PersistSimilarDocResult(List<String> similarDocs) 
 	{		
-		WriteData("TopDoc:" + topDoc);
-		WriteData("Similarity:" + String.join(" ", similarDocs));
-		WriteData("================================================================================");	
+		WriteData("Similarity:" + String.join(" ", similarDocs));			
+	}
+	
+	public void PrintLineSeperator()
+	{
+		WriteData("========================================================================================");
 	}
 }

@@ -30,6 +30,7 @@ public class Main {
 		
 		
 		try {
+			lsiFL.buildSemanticVectors();
 			lsiFL.LsiQuerySearch("block line java");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

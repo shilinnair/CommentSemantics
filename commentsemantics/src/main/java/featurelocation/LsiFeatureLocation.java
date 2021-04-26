@@ -110,19 +110,13 @@ public class LsiFeatureLocation implements FeatureLocation
 		
 	}
 	
+	
 	public List<String> LsiQuerySearch(String query) throws IOException 
 	{
 		List<String> docs = new ArrayList<String>();
 
-		try {
-			
-			//build position indexes from tokens
-			String indexCommand = "-luceneindexpath " + DOCINDEX_PATH + " " + DOCFILE_PATH;
-			IndexFilePositions.main(indexCommand.split("\\s+"));
-			
-			//build document and term vectors
-			buildTermDocVectors();
-
+		try 
+		{			
 			String Args = new String("-queryvectorfile ") + TERM_VECTOR;
 			Args += " -searchvectorfile " + DOC_VECTOR;
 			Args += " -luceneindexpath " + DOCINDEX_PATH;
@@ -145,37 +139,48 @@ public class LsiFeatureLocation implements FeatureLocation
 		return docs;
 	}
 	
-	private void buildTermDocVectors() throws IOException
+	public void buildSemanticVectors()
 	{
-		String buildArgs = new String("-dimension 200 -luceneindexpath ") + DOCINDEX_PATH;
-
-		FlagConfig flagConfig;
-		flagConfig = FlagConfig.getFlagConfig(buildArgs.split("\\s+"));
-		LuceneUtils utils = new LuceneUtils(flagConfig);
-
-		// build term vector Indexer
-		TermVectorsFromLucene termVectorIndexer;
-		if (!flagConfig.initialtermvectors().isEmpty()) {
-			termVectorIndexer = TermVectorsFromLucene.createTermBasedRRIVectors(flagConfig);
-		} else {
-			VectorStore initialDocVectors = null;
-			if (!flagConfig.initialdocumentvectors().isEmpty()) {
-				initialDocVectors = VectorStoreRAM.readFromFile(flagConfig, flagConfig.initialdocumentvectors());
+		try 
+		{
+			//build position indexes from tokens
+			String indexCommand = "-luceneindexpath " + DOCINDEX_PATH + " " + DOCFILE_PATH;
+			IndexFilePositions.main(indexCommand.split("\\s+"));
+			
+			//build semantic vectors		
+			String buildArgs = new String("-dimension 200 -luceneindexpath ") + DOCINDEX_PATH;
+	
+			FlagConfig flagConfig;
+			flagConfig = FlagConfig.getFlagConfig(buildArgs.split("\\s+"));
+			LuceneUtils utils = new LuceneUtils(flagConfig);
+	
+			// build term vector Indexer
+			TermVectorsFromLucene termVectorIndexer;
+			if (!flagConfig.initialtermvectors().isEmpty()) {
+				termVectorIndexer = TermVectorsFromLucene.createTermBasedRRIVectors(flagConfig);
+			} else {
+				VectorStore initialDocVectors = null;
+				if (!flagConfig.initialdocumentvectors().isEmpty()) {
+					initialDocVectors = VectorStoreRAM.readFromFile(flagConfig, flagConfig.initialdocumentvectors());
+				}
+	
+				termVectorIndexer = TermVectorsFromLucene.createTermVectorsFromLucene(flagConfig, initialDocVectors);
 			}
-
-			termVectorIndexer = TermVectorsFromLucene.createTermVectorsFromLucene(flagConfig, initialDocVectors);
+	
+			// build doc vector Indexer
+			DocVectors docVectors = new DocVectors(termVectorIndexer.getSemanticTermVectors(), flagConfig, utils);
+			for (int i = 1; i < flagConfig.trainingcycles(); ++i) {
+				termVectorIndexer = TermVectorsFromLucene.createTermVectorsFromLucene(flagConfig, docVectors);
+				docVectors = new DocVectors(termVectorIndexer.getSemanticTermVectors(), flagConfig, utils);
+			}
+	
+			// write term and doc vector store
+			VectorStore writeableDocVectors = docVectors.makeWriteableVectorStore();
+			VectorStoreWriter.writeVectors(TERM_VECTOR, flagConfig, termVectorIndexer.getSemanticTermVectors());
+			VectorStoreWriter.writeVectors(DOC_VECTOR, flagConfig, writeableDocVectors);
 		}
-
-		// build doc vector Indexer
-		DocVectors docVectors = new DocVectors(termVectorIndexer.getSemanticTermVectors(), flagConfig, utils);
-		for (int i = 1; i < flagConfig.trainingcycles(); ++i) {
-			termVectorIndexer = TermVectorsFromLucene.createTermVectorsFromLucene(flagConfig, docVectors);
-			docVectors = new DocVectors(termVectorIndexer.getSemanticTermVectors(), flagConfig, utils);
+		catch(Exception e) {
+			e.printStackTrace();
 		}
-
-		// write term and doc vector store
-		VectorStore writeableDocVectors = docVectors.makeWriteableVectorStore();
-		VectorStoreWriter.writeVectors(TERM_VECTOR, flagConfig, termVectorIndexer.getSemanticTermVectors());
-		VectorStoreWriter.writeVectors(DOC_VECTOR, flagConfig, writeableDocVectors);
 	}
 }
