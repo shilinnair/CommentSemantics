@@ -20,6 +20,8 @@ import pitt.search.semanticvectors.VectorStoreWriter;
 
 public class LsiFeatureLocation implements FeatureLocation 
 {
+	private final int QUERYDOC_COUNT = 20;
+	
 	static String DOCINDEX_PATH = "temp\\docindex";
 	static String DOCFILE_PATH  = "temp\\docfiles";
 	static String TERM_VECTOR   = "temp\\termvectors.bin";
@@ -120,7 +122,7 @@ public class LsiFeatureLocation implements FeatureLocation
 			String Args = new String("-queryvectorfile ") + TERM_VECTOR;
 			Args += " -searchvectorfile " + DOC_VECTOR;
 			Args += " -luceneindexpath " + DOCINDEX_PATH;
-			Args += " -numsearchresults 3 " + query;
+			Args += " -numsearchresults " + QUERYDOC_COUNT + " " + query;
 			String[] searchArgs = Args.split("\\s+");
 
 			List<SearchResult> testresults = Search.runSearch(FlagConfig.getFlagConfig(searchArgs));

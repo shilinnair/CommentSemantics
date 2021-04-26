@@ -150,7 +150,7 @@ public class GoldSetEvaluator
 	
 	public void printFinalScore(String executionName) 
 	{
-		resultStore.WriteData(executionName);
+		resultStore.WriteData("Execution Mode:" + executionName);
 		
 		//vsm final score
 		if(vsmScore.totalExecution > 0) {
@@ -158,7 +158,7 @@ public class GoldSetEvaluator
 			vsmScore.finalRecall = vsmScore.finalRecall / vsmScore.totalExecution;
 			vsmScore.finalFScore = vsmScore.finalFScore / vsmScore.totalExecution;
 			
-			resultStore.WriteData("VSM excution Scores:");
+			resultStore.WriteData("VSM Scores:");
 			resultStore.WriteData("Precision:" + String.format("%.02f",vsmScore.finalPrecision));
 			resultStore.WriteData("Recall:" + String.format("%.02f",vsmScore.finalRecall));
 			resultStore.WriteData("FScore:" + String.format("%.02f",vsmScore.finalFScore));
@@ -171,7 +171,7 @@ public class GoldSetEvaluator
 			lsiScore.finalRecall = lsiScore.finalRecall / lsiScore.totalExecution;
 			lsiScore.finalFScore = lsiScore.finalFScore / lsiScore.totalExecution;
 			
-			resultStore.WriteData("LSI excution Scores:");
+			resultStore.WriteData("LSI Scores:");
 			resultStore.WriteData("Precision:" + String.format("%.02f",lsiScore.finalPrecision));
 			resultStore.WriteData("Recall:" + String.format("%.02f",lsiScore.finalRecall));
 			resultStore.WriteData("FScore:" + String.format("%.02f",lsiScore.finalFScore));
@@ -184,7 +184,7 @@ public class GoldSetEvaluator
 			vsmSimilarityScore.finalRecall = vsmSimilarityScore.finalRecall / vsmSimilarityScore.totalExecution;
 			vsmSimilarityScore.finalFScore = vsmSimilarityScore.finalFScore / vsmSimilarityScore.totalExecution;
 			
-			resultStore.WriteData("VSM Similarity excution Scores:");
+			resultStore.WriteData("VSM Similarity Scores:");
 			resultStore.WriteData("Precision:" + String.format("%.02f",vsmSimilarityScore.finalPrecision));
 			resultStore.WriteData("Recall:" + String.format("%.02f",vsmSimilarityScore.finalRecall));
 			resultStore.WriteData("FScore:" + String.format("%.02f",vsmSimilarityScore.finalFScore));
@@ -197,7 +197,7 @@ public class GoldSetEvaluator
 			lsiSimilarityScore.finalRecall = lsiSimilarityScore.finalRecall / lsiSimilarityScore.totalExecution;
 			lsiSimilarityScore.finalFScore = lsiSimilarityScore.finalFScore / lsiSimilarityScore.totalExecution;
 			
-			resultStore.WriteData("LSI Similarity excution Scores:");
+			resultStore.WriteData("LSI Similarity Scores:");
 			resultStore.WriteData("Precision:" + String.format("%.02f",lsiSimilarityScore.finalPrecision));
 			resultStore.WriteData("Recall:" + String.format("%.02f",lsiSimilarityScore.finalRecall));
 			resultStore.WriteData("FScore:" + String.format("%.02f",lsiSimilarityScore.finalFScore));

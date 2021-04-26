@@ -22,6 +22,8 @@ import org.apache.lucene.store.RAMDirectory;
 
 public class VsmFeatureLocation implements FeatureLocation 
 {	
+	private final int QUERYDOC_COUNT = 20;
+	
 	private StandardAnalyzer standardAnalyzer = null;
 	private Directory directory = null;
 	private IndexWriter writer = null;
@@ -83,8 +85,7 @@ public class VsmFeatureLocation implements FeatureLocation
 		
 		try {
 
-			//if (writer.isOpen())
-				writer.close();
+			writer.close();
 
 			IndexReader reader = DirectoryReader.open(directory);
 			IndexSearcher searcher = new IndexSearcher(reader);
@@ -94,25 +95,24 @@ public class VsmFeatureLocation implements FeatureLocation
 			TopDocs results = null;
 
 			// create the query object and search the document
-			results = searcher.search(parser.parse(query), 3);
+			results = searcher.search(parser.parse(query), QUERYDOC_COUNT);
 			
-
-			if (results.totalHits > 0) {
-				docs.add(reader.document(results.scoreDocs[0].doc).getField("filename").stringValue());		
+			int numDocuments = QUERYDOC_COUNT;
+			if(results.totalHits < QUERYDOC_COUNT)
+				numDocuments = results.totalHits; 
+			
+			if(numDocuments > 0) {
 				
-				System.out.println("Query search returned top document: " + docs.get(0));
-			} 
+				for(int i=0; i< numDocuments; ++i)
+				{
+					docs.add(reader.document(results.scoreDocs[i].doc).getField("filename").stringValue());	
+				}
+			}
 			else {
 				System.out.println("Query:" + query + "- No document matches the query!");
 			}
-
-			if (results.totalHits > 1) {
-				docs.add(reader.document(results.scoreDocs[1].doc).getField("filename").stringValue());				
-			}
-			if (results.totalHits > 2) {
-				docs.add(reader.document(results.scoreDocs[2].doc).getField("filename").stringValue());				
-			}
 			
+						
 			System.out.println("Query: " + query + ". Search results: \n" + String.join(System.lineSeparator(), docs));
 
 			reader.close();
@@ -121,27 +121,6 @@ public class VsmFeatureLocation implements FeatureLocation
 			e.printStackTrace();
 		}
 
-		
-		/*if(!docs.isEmpty() && !similarDocs.isEmpty())
-		{
-			//natural similarity comparison
-			System.out.println("Natural similarity of query results with vsm dcument similarity;");
-			
-			for(String doc : docs) {
-				
-				if(similarDocs.contains(doc))
-				{
-					System.out.println("query result match with natural similarity, document:" + doc);
-				}
-				else
-				{
-					System.out.println("Doc not found in similarity docs, document:" + doc);
-				}
-			}				
-				
-		}
-		*/
-		
 		return docs;
 	}
 
