@@ -30,7 +30,7 @@ import featurelocation.FeatureLocation;
 
 public class FileParser {
 	
-	//private final static String [] RESERVED_WORDS = {"about", "again", "all", "am", "an", "and", "any", "are", "array", "as", "at", "be", "because", "been", "before", "below", "between", "both", "but", "by", "cannot", "class", "could", "did", "do", "does", "down", "double", "each", "few", "for", "from", "further", "get", "had", "has", "have", "he", "her", "here", "hers", "herself", "him", "himself", "his", "how", "if", "in", "int", "integer", "into", "is", "it", "its", "itself", "list", "me", "more", "most", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "our", "ours", "ourselves", "out", "over", "own", "same", "set", "she", "should", "so", "some", "string", "such", "than", "that", "the", "their", "theirs", "them", "themselves", "then", "there", "these", "they", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why", "with", "would", "you", "your", "yours", "yourself", "yourselves", "String"};
+	CodeCommentParser codeCommentParser = new CodeCommentParser();	
 	
 	private final String JAVAKEYWORDS = "./data/javakeywords.txt";
 	private final String ENGLISHSTOPWORDS = "./data/stopwords.txt";
@@ -151,7 +151,7 @@ public class FileParser {
 				
 				//remove commented code
 				if(RemoveCodeComments) {				
-					refinedComment = CodeCommentParser.parseCodeComments(refinedComment);
+					refinedComment = codeCommentParser.parseCodeComments(refinedComment);
 					if(refinedComment.isEmpty())
 						continue;
 				}
@@ -168,7 +168,7 @@ public class FileParser {
 				String refinedComment = comment.getContent();
 				
 				if(RemoveCodeComments) {  //remove commented code				
-					refinedComment = CodeCommentParser.parseCodeComments(refinedComment);
+					refinedComment = codeCommentParser.parseCodeComments(refinedComment);
 					if(refinedComment.isEmpty())
 						continue;
 				}
@@ -184,7 +184,7 @@ public class FileParser {
 				String refinedComment = comment.getContent();
 				
 				if(RemoveCodeComments) {  //remove commented code				
-					refinedComment = CodeCommentParser.parseCodeComments(refinedComment);
+					refinedComment = codeCommentParser.parseCodeComments(refinedComment);
 					if(refinedComment.isEmpty())
 						continue;
 				}
@@ -200,7 +200,7 @@ public class FileParser {
 				String refinedComment = comment.getContent();
 				
 				if(RemoveCodeComments) {  //remove commented code				
-					refinedComment = CodeCommentParser.parseCodeComments(refinedComment);
+					refinedComment = codeCommentParser.parseCodeComments(refinedComment);
 					if(refinedComment.isEmpty())
 						continue;
 				}
