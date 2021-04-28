@@ -140,7 +140,7 @@ public class LsiFeatureLocation implements FeatureLocation
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Exception in Query! " + e.getMessage());
 		}
 
 		return docs;
