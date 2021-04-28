@@ -191,6 +191,7 @@ public class UserScreen
 					{
 						resultStore.OpenStore(entry.getKey().toString());
 						
+						System.out.println("Query Number:" + entry.getKey());
 						runQuery(entry.getKey(), entry.getValue());
 						
 						resultStore.CloseStore();

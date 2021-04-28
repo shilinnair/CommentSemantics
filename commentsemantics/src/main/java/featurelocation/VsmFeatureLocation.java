@@ -113,7 +113,7 @@ public class VsmFeatureLocation implements FeatureLocation
 			}
 			
 						
-			System.out.println("Query: " + query + ". Search results: \n" + String.join(System.lineSeparator(), docs));
+			System.out.println("Query: " + query + "\nSearch results: \n" + String.join(System.lineSeparator(), docs));
 
 			reader.close();
 		}	

@@ -58,6 +58,8 @@ public class GoldSetEvaluator
 	public void EvaluateQueryResult(FLType flType, Integer queryNumber, List<String> queryResult)
 	{
 		List<String> goldResults = goldsetResults.get(queryNumber);
+		if(goldResults == null)
+			return;
 		
 		int numMachingDocs = 0;
 		Float indexPrecision = 0.0f; 
@@ -276,22 +278,6 @@ public class GoldSetEvaluator
 		finally {
 			scanner.close();
 		}
-		
-		
-		//test query
-		//goldsetQueries.put(112599, "Bug XMPP Room subject updated xmpp chat updated remotely xmpp server title room updated dynamically Bug XMPP Room subject updated xmpp chat room message user chat presence listener invitation connect");
-		//goldsetQueries.put(119206, "Bug Add event history hyperlinks collab text chat output problem shared editor collab history participant opens shared editor receiver record shared editor opening replay event control shared editor ECF collab features display editor opening editor selection events chat text output hyperlinks ability receiver click hyperlinks locally remotely replay event receiver preference received events executed shared editor executed presented text chat history Provide additional events resources share key board Bug Add event history hyperlinks collab text chat output chat message send file user handle text create");
-		//goldsetQueries.put(172958, "Bug IRC Patch commands Root Channel Containers commands work Channel Container setup command containers patch acceptable write mode commands Mark Bug IRC Patch commands Root Channel Containers channel room message handle type user container connect");
-		
-		//test result
-		String javaFils = "1691.java 2220.java	820.java 1991.java 281.java	1347.java 1834.java	2126.java 241.java 2613.java"; 
-		goldsetResults.put(112599, Arrays.asList(javaFils.split("\\s+")));
-		
-		javaFils = "2397.java 2559.java	901.java 478.java 754.java 461.java	2189.java 1818.java	293.java 2099.java"; 
-		goldsetResults.put(119206, Arrays.asList(javaFils.split("\\s+")));
-		
-		javaFils = "1329.java 2126.java	2300.java 318.java 798.java	1692.java 1380.java	1834.java 1209.java	2008.java"; 
-		goldsetResults.put(172958, Arrays.asList(javaFils.split("\\s+")));
 	}
 
 }
