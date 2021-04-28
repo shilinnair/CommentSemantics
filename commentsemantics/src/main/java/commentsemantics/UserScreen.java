@@ -22,7 +22,7 @@ import javax.swing.JRadioButton;
 import featurelocation.LsiFeatureLocation;
 import featurelocation.VsmDocSimilarity;
 import featurelocation.VsmFeatureLocation;
-
+import parser.CodeCommentParser;
 import parser.FileParser;
 import parser.ProjectParser;
 import queryresult.GoldSetEvaluator;
@@ -67,7 +67,8 @@ public class UserScreen
 	LsiFeatureLocation lsiFL = new LsiFeatureLocation();
 	VsmDocSimilarity vsmDocSimilarity = new VsmDocSimilarity();
 	
-	FileParser fileParser = new FileParser();
+	CodeCommentParser codeCommentParser = new CodeCommentParser();
+	FileParser fileParser = new FileParser(codeCommentParser);
 	ProjectParser projParser = new ProjectParser(fileParser);
 	
 	ResultStore resultStore = new ResultStore();
@@ -179,13 +180,16 @@ public class UserScreen
 		queryButton.addActionListener(new ActionListener() 
 		{	
 			public void actionPerformed(ActionEvent arg0) {
+				
+				long startTime = System.currentTimeMillis();
 								
 				if(check_goldsetEvaluation.isSelected()) //goldset evaluation mode, pre-configured project path
 				{
 					projDir = GoldSetEvaluator.Goldset_Src;
 					
-					parseProject();					
-					lsiFL.buildSemanticVectors();
+					parseProject();			
+					if(check_lsi.isSelected())
+						lsiFL.buildSemanticVectors();
 					
 					for(Map.Entry<Integer, String> entry : goldsetEvaluator.GetQueries().entrySet())
 					{
@@ -222,7 +226,10 @@ public class UserScreen
 					runQuery(0, query);
 					
 					resultStore.CloseStore();
-				}										
+				}
+				
+				long endTime = System.currentTimeMillis();
+				System.out.println("Execution Time " + (endTime - startTime)/1000 + " Seconds");
 			}
 		});
 		
@@ -254,6 +261,7 @@ public class UserScreen
 	{
 		fileParser.reset();
 		goldsetEvaluator.Reset();
+		codeCommentParser.Begin();
 		
 		boolean removeCodeComments = check_removeCodeComments.isSelected();
 		boolean includeArtefacts = check_includeArtefacts.isSelected();
@@ -270,6 +278,8 @@ public class UserScreen
 		fileParser.setUseJavadocComment(docComments);
 		
 		projParser.parseProject(new File(projDir));
+		
+		codeCommentParser.End();
 	}
 	
 	private void runQuery(Integer queryNumber, String query)

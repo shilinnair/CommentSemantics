@@ -22,7 +22,7 @@ import org.apache.lucene.store.RAMDirectory;
 
 public class VsmFeatureLocation implements FeatureLocation 
 {	
-	private final int QUERYDOC_COUNT = 20;
+	private final int QUERYDOC_COUNT = 50;
 	
 	private StandardAnalyzer standardAnalyzer = null;
 	private Directory directory = null;

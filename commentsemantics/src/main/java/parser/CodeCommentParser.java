@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import queryresult.ResultStore;
+
 public class CodeCommentParser 
 {	
 	private final double THRESHOLD = 50;
@@ -27,11 +29,25 @@ public class CodeCommentParser
         patternList.add(SCOPE);
     }
     
+    public void Begin()
+    {
+    	resultStore.OpenStore("CommentsExcluded");
+    }
+    
+    public void End()
+    {
+    	resultStore.CloseStore();
+    }
+    
+    private final ResultStore resultStore = new ResultStore();
+    
     // Parse the comments and remove commented codes in it.
  	// Returns comments with out code, if commented code is less than 50% of total comments
  	// If commented code is more than 50% of total comments then returns empty string
  	public String parseCodeComments(String comment)
  	{
+ 		String orginalData = comment;
+ 		
  		String result = "";
  		
  		StringBuilder evaluationString = new StringBuilder();
@@ -52,14 +68,13 @@ public class CodeCommentParser
         
         double percentage = ((double) evaluationString.length() / originalCharacterCount ) * 100L;
 
-        if(percentage <= THRESHOLD)
-            result = comment;
-        else
-        	System.out.println("Percentage code exceeds the comment: "+ percentage + "%\n"
-                    + "originalcount: " +originalCharacterCount + "\n"
-                    + "Remaining: " + comment.length() + "\n"
-                    + "comment:" + comment);
- 		
+        if(percentage <= THRESHOLD) {
+            result = comment;  //return net comments after removing the code
+        }
+        else {
+        	resultStore.WriteData(orginalData);  //ignoring the entire comment when code is more than 50% of comments
+        }
+        	
  		return result;
  	}
  	

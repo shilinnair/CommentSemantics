@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import pitt.search.lucene.IndexFilePositions;
 import pitt.search.semanticvectors.DocVectors;
@@ -20,7 +22,7 @@ import pitt.search.semanticvectors.VectorStoreWriter;
 
 public class LsiFeatureLocation implements FeatureLocation 
 {
-	private final int QUERYDOC_COUNT = 20;
+	private final int QUERYDOC_COUNT = 50;
 	
 	static String DOCINDEX_PATH = "temp\\docindex";
 	static String DOCFILE_PATH  = "temp\\docfiles";
@@ -118,7 +120,10 @@ public class LsiFeatureLocation implements FeatureLocation
 		List<String> docs = new ArrayList<String>();
 
 		try 
-		{			
+		{	
+			Logger logger = Logger.getLogger("VerbatimLogger");
+			logger.setLevel(Level.SEVERE);
+			
 			String Args = new String("-queryvectorfile ") + TERM_VECTOR;
 			Args += " -searchvectorfile " + DOC_VECTOR;
 			Args += " -luceneindexpath " + DOCINDEX_PATH;

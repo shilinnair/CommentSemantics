@@ -85,26 +85,30 @@ public class GoldSetEvaluator
 			} 
 		}
 		
-		Float precision = (float)indexPrecision / (float)numMachingDocs;
-		Float recall = (float)numMachingDocs / (float)TruePositives;
-		Float fscore = (2 * precision * recall) / (precision + recall);
-		
-		if(flType == FLType.VSM) {
-			vsmScore.finalPrecision += precision;
-			vsmScore.finalRecall += recall;
-			vsmScore.finalFScore += fscore;			
-			vsmScore.totalExecution++;
+		if(numMachingDocs > 0) {
+			
+			Float precision = (float)indexPrecision / (float)numMachingDocs;
+			Float recall = (float)numMachingDocs / (float)TruePositives;
+			Float fscore = (2 * precision * recall) / (precision + recall);
+			
+			if(flType == FLType.VSM) {
+				vsmScore.finalPrecision += precision;
+				vsmScore.finalRecall += recall;
+				vsmScore.finalFScore += fscore;			
+				vsmScore.totalExecution++;
+			}
+			else {
+				lsiScore.finalPrecision += precision;
+				lsiScore.finalRecall += recall;
+				lsiScore.finalFScore += fscore;			
+				lsiScore.totalExecution++;			
+			}
+			
+			resultStore.WriteData("Precision:" + String.format("%.02f", precision));
+			resultStore.WriteData("Recall:" + String.format("%.02f", recall));		
+			resultStore.WriteData("FScore:" + String.format("%.02f", fscore));
 		}
-		else {
-			lsiScore.finalPrecision += precision;
-			lsiScore.finalRecall += recall;
-			lsiScore.finalFScore += fscore;			
-			lsiScore.totalExecution++;			
-		}
 		
-		resultStore.WriteData("Precision:" + String.format("%.02f", precision));
-		resultStore.WriteData("Recall:" + String.format("%.02f", recall));		
-		resultStore.WriteData("FScore:" + String.format("%.02f", fscore));
 	}
 	
 	public void EvaluateSimilairyResult(FLType flType, List<String> similarityResult, List<String> queryResult)
@@ -132,26 +136,29 @@ public class GoldSetEvaluator
 			}
 		}
 		
-		Float precision = (float)indexPrecision / (float)numMachingDocs;
-		Float recall = (float)numMachingDocs / (float)TruePositives;
-		Float fscore = (2 * precision * recall) / (precision + recall);
+		if(numMachingDocs > 0) {
 		
-		if(flType == FLType.VSM) {
-			vsmSimilarityScore.finalPrecision += precision;
-			vsmSimilarityScore.finalRecall += recall;
-			vsmSimilarityScore.finalFScore += fscore;			
-			vsmSimilarityScore.totalExecution++;
+			Float precision = (float)indexPrecision / (float)numMachingDocs;
+			Float recall = (float)numMachingDocs / (float)TruePositives;
+			Float fscore = (2 * precision * recall) / (precision + recall);
+			
+			if(flType == FLType.VSM) {
+				vsmSimilarityScore.finalPrecision += precision;
+				vsmSimilarityScore.finalRecall += recall;
+				vsmSimilarityScore.finalFScore += fscore;			
+				vsmSimilarityScore.totalExecution++;
+			}
+			else {
+				lsiSimilarityScore.finalPrecision += precision;
+				lsiSimilarityScore.finalRecall += recall;
+				lsiSimilarityScore.finalFScore += fscore;			
+				lsiSimilarityScore.totalExecution++;			
+			}
+			
+			resultStore.WriteData("SimilarityPrecision:" + String.format("%.02f", precision));
+			resultStore.WriteData("SimilarityRecall:" + String.format("%.02f", recall));		
+			resultStore.WriteData("SimilarityFScore:" + String.format("%.02f", fscore));
 		}
-		else {
-			lsiSimilarityScore.finalPrecision += precision;
-			lsiSimilarityScore.finalRecall += recall;
-			lsiSimilarityScore.finalFScore += fscore;			
-			lsiSimilarityScore.totalExecution++;			
-		}
-		
-		resultStore.WriteData("SimilarityPrecision:" + String.format("%.02f", precision));
-		resultStore.WriteData("SimilarityRecall:" + String.format("%.02f", recall));		
-		resultStore.WriteData("SimilarityFScore:" + String.format("%.02f", fscore));
 	}
 	
 	public void printFinalScore(String executionName) 

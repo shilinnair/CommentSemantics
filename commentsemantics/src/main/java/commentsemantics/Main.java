@@ -6,6 +6,7 @@ import java.io.IOException;
 import featurelocation.LsiFeatureLocation;
 import featurelocation.VsmDocSimilarity;
 import featurelocation.VsmFeatureLocation;
+import parser.CodeCommentParser;
 import parser.FileParser;
 import parser.ProjectParser;
 
@@ -17,7 +18,8 @@ public class Main {
 		LsiFeatureLocation lsiFL = new LsiFeatureLocation();
 		VsmDocSimilarity vsmDocSimilarity = new VsmDocSimilarity();
 		
-		FileParser fileParser = new FileParser();
+		CodeCommentParser codeCommentParser = new CodeCommentParser();
+		FileParser fileParser = new FileParser(codeCommentParser);
 		fileParser.setVsmFL(vsmFL);
 		fileParser.setLsiFL(lsiFL);
 		fileParser.setUseJavadocComment(true);

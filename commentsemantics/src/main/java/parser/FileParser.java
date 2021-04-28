@@ -30,7 +30,7 @@ import featurelocation.FeatureLocation;
 
 public class FileParser {
 	
-	CodeCommentParser codeCommentParser = new CodeCommentParser();	
+	private CodeCommentParser codeCommentParser = null;	
 	
 	private final String JAVAKEYWORDS = "./data/javakeywords.txt";
 	private final String ENGLISHSTOPWORDS = "./data/stopwords.txt";
@@ -44,8 +44,9 @@ public class FileParser {
 	
 	private List<String> StopWords = new ArrayList<String>();
 	
-	public FileParser()
+	public FileParser(CodeCommentParser codeCommentParser)
 	{
+		this.codeCommentParser = codeCommentParser;
 		populateStopWords();		
 	}
 	
