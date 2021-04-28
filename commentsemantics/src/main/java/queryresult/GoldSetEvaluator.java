@@ -1,15 +1,19 @@
 package queryresult;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class GoldSetEvaluator 
 {
-	public static final String Goldset_Src = "Goldset\\Src";
-	public static final String Goldset_Query = "Goldset\\Query";
-	public static final String Goldset_Result = "Goldset\\Result";
+	public static final String Goldset_Src = "Goldset\\Src\\ecf\\";
+	public static final String Goldset_Query = "Goldset\\Query\\ecf\\";
+	public static final String Goldset_Result = "Goldset\\Result\\ecf\\";
 	
 	public enum FLType {VSM, LSI}
 	
@@ -208,11 +212,76 @@ public class GoldSetEvaluator
 	}
 	
 	private void populateGoldSet()
-	{		
+	{	
+		Scanner scanner = null;
+		
+		//populate query
+		try {
+			scanner = new Scanner(new File(Goldset_Query + "proposed-NL.txt"));
+			while (scanner.hasNextLine()) 
+			{
+			   String queryLine = scanner.nextLine();
+			   
+			   String queryNumber = queryLine.substring(0, 6);
+			   String query = queryLine.substring(7);
+			   
+			   if(queryNumber.trim().length() < 6)
+				   query = queryLine.substring(6);
+			   
+			   goldsetQueries.put(Integer.parseInt(queryNumber.trim()), query);
+			}			
+		} 
+		catch (FileNotFoundException e) {			
+			e.printStackTrace();
+		}
+		finally {
+			scanner.close();
+		}
+		
+		//populate results
+		try {
+			scanner = new Scanner(new File(Goldset_Result + "proposed-NL.txt"));
+			List<String> tempResults = new ArrayList<>();
+			Integer queryDigits = 0;
+			
+			while (scanner.hasNextLine()) 
+			{
+			   String resultLine = scanner.nextLine();
+			   
+			   String queryNumber = resultLine.substring(0, 6);
+			   String javaFile = resultLine.substring(7);
+			   
+			   if(queryDigits != Integer.parseInt(queryNumber.trim()) && tempResults.size() > 0) 
+			   {
+				   List<String> resultFiles = new ArrayList<>();
+				   
+				   //we have got the list of results for the query. Put it into the result map
+				   for(String fullPath : tempResults) {
+					   String fileName = fullPath.substring(fullPath.lastIndexOf("/") + 1);
+					   resultFiles.add(fileName.split(("\\s+"))[0]);
+				   }
+				   goldsetResults.put(queryDigits, resultFiles);
+				   
+				   //begin new query and its set of results
+				   tempResults.clear();
+			   }
+			   
+				queryDigits = Integer.parseInt(queryNumber.trim());
+				tempResults.add(javaFile);				   			   
+			}			
+		} 
+		catch (FileNotFoundException e) {			
+			e.printStackTrace();
+		}
+		finally {
+			scanner.close();
+		}
+		
+		
 		//test query
-		goldsetQueries.put(112599, "Bug XMPP Room subject updated xmpp chat updated remotely xmpp server title room updated dynamically Bug XMPP Room subject updated xmpp chat room message user chat presence listener invitation connect");
-		goldsetQueries.put(119206, "Bug Add event history hyperlinks collab text chat output problem shared editor collab history participant opens shared editor receiver record shared editor opening replay event control shared editor ECF collab features display editor opening editor selection events chat text output hyperlinks ability receiver click hyperlinks locally remotely replay event receiver preference received events executed shared editor executed presented text chat history Provide additional events resources share key board Bug Add event history hyperlinks collab text chat output chat message send file user handle text create");
-		goldsetQueries.put(172958, "Bug IRC Patch commands Root Channel Containers commands work Channel Container setup command containers patch acceptable write mode commands Mark Bug IRC Patch commands Root Channel Containers channel room message handle type user container connect");
+		//goldsetQueries.put(112599, "Bug XMPP Room subject updated xmpp chat updated remotely xmpp server title room updated dynamically Bug XMPP Room subject updated xmpp chat room message user chat presence listener invitation connect");
+		//goldsetQueries.put(119206, "Bug Add event history hyperlinks collab text chat output problem shared editor collab history participant opens shared editor receiver record shared editor opening replay event control shared editor ECF collab features display editor opening editor selection events chat text output hyperlinks ability receiver click hyperlinks locally remotely replay event receiver preference received events executed shared editor executed presented text chat history Provide additional events resources share key board Bug Add event history hyperlinks collab text chat output chat message send file user handle text create");
+		//goldsetQueries.put(172958, "Bug IRC Patch commands Root Channel Containers commands work Channel Container setup command containers patch acceptable write mode commands Mark Bug IRC Patch commands Root Channel Containers channel room message handle type user container connect");
 		
 		//test result
 		String javaFils = "1691.java 2220.java	820.java 1991.java 281.java	1347.java 1834.java	2126.java 241.java 2613.java"; 
