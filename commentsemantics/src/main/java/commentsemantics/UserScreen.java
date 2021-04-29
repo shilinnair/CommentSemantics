@@ -45,8 +45,6 @@ public class UserScreen
 	static JLabel l3 = new JLabel("Query:");
 	static JTextField text_query = new JTextField();
 	
-	//static JLabel lResult = new JLabel("Result:");
-	//static JTextArea textResult = new JTextArea();
 	
 	//radio buttons
 	static JLabel radio_Searchlabel = new JLabel("Search Options:");
@@ -100,12 +98,6 @@ public class UserScreen
 		
 		check_includeArtefacts.setBounds(230, 130, 200, 20);
 		contentPane.add(check_includeArtefacts);
-		
-		//lResult.setBounds(50, 170, 100, 20);
-		//contentPane.add(lResult);
-		//textResult.setBounds(50, 190, 300, 100);
-		//contentPane.add(textResult);
-		
 		
 		//radio buttons
 		bgSeachOption.add(radio_allcomments);
