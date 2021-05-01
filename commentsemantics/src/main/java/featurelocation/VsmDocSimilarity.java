@@ -32,7 +32,7 @@ import org.apache.lucene.store.RAMDirectory;
 
 public class VsmDocSimilarity implements FeatureLocation 
 {
-	private final int SIMILARITYDOC_COUNT = 10;
+	private final int SIMILARITYDOC_COUNT = 50;
 	
 	private StandardAnalyzer standardAnalyzer = null;
 	private Directory directory = null;
