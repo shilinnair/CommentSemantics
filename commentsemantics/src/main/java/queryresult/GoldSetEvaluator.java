@@ -27,6 +27,7 @@ public class GoldSetEvaluator
 		private Float finalPrecision = 0.0f;
 		private Float finalRecall = 0.0f;
 		private Float finalFScore = 0.0f;
+		private Float finalReciprocalRank = 0.0f;
 		private int totalExecution = 0;	
 	}
 	
@@ -61,7 +62,8 @@ public class GoldSetEvaluator
 			return;
 		
 		int numMachingDocs = 0;
-		Float indexPrecision = 0.0f; 
+		Float indexPrecision = 0.0f;
+		Float ReciprocalRank = 0.0f;
 		
 		final int TruePositives = goldResults.size();
 		
@@ -80,7 +82,10 @@ public class GoldSetEvaluator
 				else {
 					indexPrecision += ((float)TruePositives / (index + 1));
 				}
-					
+				
+				if(ReciprocalRank == 0.0f) {  //find the top document RR
+					ReciprocalRank =  1.0f / (index+1);
+				}						
 			} 
 		}
 		
@@ -94,43 +99,55 @@ public class GoldSetEvaluator
 				vsmScore.finalPrecision += precision;
 				vsmScore.finalRecall += recall;
 				vsmScore.finalFScore += fscore;			
+				vsmScore.finalReciprocalRank += ReciprocalRank;
 				vsmScore.totalExecution++;
 			}
 			else {
 				lsiScore.finalPrecision += precision;
 				lsiScore.finalRecall += recall;
-				lsiScore.finalFScore += fscore;			
+				lsiScore.finalFScore += fscore;
+				lsiScore.finalReciprocalRank += ReciprocalRank;
 				lsiScore.totalExecution++;			
 			}
 			
-			resultStore.WriteData("Precision:" + String.format("%.02f", precision));
+			resultStore.WriteData("AveragePrecision:" + String.format("%.02f", precision));
 			resultStore.WriteData("Recall:" + String.format("%.02f", recall));		
 			resultStore.WriteData("FScore:" + String.format("%.02f", fscore));
+			resultStore.WriteData("ReciprocalRank:" + String.format("%.02f", ReciprocalRank));
 		}
 		
 	}
 	
-	public void EvaluateSimilairyResult(FLType flType, List<String> similarityResult, List<String> queryResult)
+	public void EvaluateSimilairyResult(FLType flType, Integer queryNumber, List<String> similarityResult)
 	{			
+		List<String> goldResults = goldsetResults.get(queryNumber);
+		if(goldResults == null)
+			return;
+		
 		int numMachingDocs = 0;
 		Float indexPrecision = 0.0f; 
+		Float ReciprocalRank = 0.0f;
 		
-		final int TruePositives = similarityResult.size();
+		final int TruePositives = goldResults.size();
 		
 		for(int i=0; i< similarityResult.size(); ++i)
 		{
 			String similarDoc = similarityResult.get(i);
 			
-			if(queryResult.contains(similarDoc))
+			if(goldResults.contains(similarDoc))
 			{
 				numMachingDocs++;
 				
-				int index = queryResult.indexOf(similarDoc);		
+				int index = goldResults.indexOf(similarDoc);		
 				if(index < TruePositives) {
 					indexPrecision += 1.0f;
 				}
 				else {
 					indexPrecision += ((float)TruePositives / (index + 1));
+				}
+				
+				if(ReciprocalRank == 0.0f) {  //find the top document RR
+					ReciprocalRank =  1.0f / (index+1);
 				}
 			}
 		}
@@ -145,18 +162,21 @@ public class GoldSetEvaluator
 				vsmSimilarityScore.finalPrecision += precision;
 				vsmSimilarityScore.finalRecall += recall;
 				vsmSimilarityScore.finalFScore += fscore;			
+				vsmSimilarityScore.finalReciprocalRank += ReciprocalRank;
 				vsmSimilarityScore.totalExecution++;
 			}
 			else {
 				lsiSimilarityScore.finalPrecision += precision;
 				lsiSimilarityScore.finalRecall += recall;
-				lsiSimilarityScore.finalFScore += fscore;			
+				lsiSimilarityScore.finalFScore += fscore;
+				lsiSimilarityScore.finalReciprocalRank += ReciprocalRank;
 				lsiSimilarityScore.totalExecution++;			
 			}
 			
-			resultStore.WriteData("SimilarityPrecision:" + String.format("%.02f", precision));
+			resultStore.WriteData("SimilarityAveragePrecision:" + String.format("%.02f", precision));
 			resultStore.WriteData("SimilarityRecall:" + String.format("%.02f", recall));		
 			resultStore.WriteData("SimilarityFScore:" + String.format("%.02f", fscore));
+			resultStore.WriteData("SimilarityReciprocalRank:" + String.format("%.02f", ReciprocalRank));
 		}
 	}
 	
@@ -169,12 +189,15 @@ public class GoldSetEvaluator
 			vsmScore.finalPrecision = vsmScore.finalPrecision / vsmScore.totalExecution;
 			vsmScore.finalRecall = vsmScore.finalRecall / vsmScore.totalExecution;
 			vsmScore.finalFScore = vsmScore.finalFScore / vsmScore.totalExecution;
+			vsmScore.finalReciprocalRank = vsmScore.finalReciprocalRank / vsmScore.totalExecution;
 			
 			resultStore.WriteData("VSM Scores:");
-			resultStore.WriteData("Precision:" + String.format("%.02f",vsmScore.finalPrecision));
-			resultStore.WriteData("Recall:" + String.format("%.02f",vsmScore.finalRecall));
-			resultStore.WriteData("FScore:" + String.format("%.02f",vsmScore.finalFScore));
-			System.out.println("VSM excution Scores - Precision:" + vsmScore.finalPrecision + " Recall:" + vsmScore.finalRecall + " FScore:" + vsmScore.finalFScore);
+			resultStore.WriteData("MeanAveragePrecision(mAP):" + String.format("%.02f",vsmScore.finalPrecision));
+			resultStore.WriteData("MeanRecall(mR):" + String.format("%.02f",vsmScore.finalRecall));
+			resultStore.WriteData("MeanF-Score(mFS):" + String.format("%.02f",vsmScore.finalFScore));
+			resultStore.WriteData("MeanReciprocalRank(mRR):" + String.format("%.02f",vsmScore.finalReciprocalRank));
+			System.out.println("VSM excution Scores - MeanAveragePrecision(mAP):" + vsmScore.finalPrecision + " MeanRecall(mR):" + vsmScore.finalRecall + 
+					" MeanF-Score(mFS):" + vsmScore.finalFScore + " MeanReciprocalRank(mRR):" + vsmScore.finalReciprocalRank);
 		}
 		
 		//lsi final score
@@ -182,12 +205,15 @@ public class GoldSetEvaluator
 			lsiScore.finalPrecision = lsiScore.finalPrecision / lsiScore.totalExecution;
 			lsiScore.finalRecall = lsiScore.finalRecall / lsiScore.totalExecution;
 			lsiScore.finalFScore = lsiScore.finalFScore / lsiScore.totalExecution;
+			lsiScore.finalReciprocalRank = lsiScore.finalReciprocalRank / lsiScore.totalExecution;
 			
 			resultStore.WriteData("LSI Scores:");
-			resultStore.WriteData("Precision:" + String.format("%.02f",lsiScore.finalPrecision));
-			resultStore.WriteData("Recall:" + String.format("%.02f",lsiScore.finalRecall));
-			resultStore.WriteData("FScore:" + String.format("%.02f",lsiScore.finalFScore));
-			System.out.println("LSI excution Scores - Precision:" + lsiScore.finalPrecision + " Recall:" + lsiScore.finalRecall + " FScore:" + lsiScore.finalFScore);
+			resultStore.WriteData("MeanAveragePrecision(mAP):" + String.format("%.02f",lsiScore.finalPrecision));
+			resultStore.WriteData("MeanRecall(mR):" + String.format("%.02f",lsiScore.finalRecall));
+			resultStore.WriteData("MeanF-Score(mFS):" + String.format("%.02f",lsiScore.finalFScore));
+			resultStore.WriteData("MeanReciprocalRank(mRR):" + String.format("%.02f",lsiScore.finalReciprocalRank));
+			System.out.println("LSI excution Scores - MeanAveragePrecision(mAP):" + lsiScore.finalPrecision + " MeanRecall(mR):" + lsiScore.finalRecall + 
+					" MeanF-Score(mFS):" + lsiScore.finalFScore + " MeanReciprocalRank(mRR):" + lsiScore.finalReciprocalRank);
 		}
 		
 		//vsmsimilarity final score
@@ -195,12 +221,15 @@ public class GoldSetEvaluator
 			vsmSimilarityScore.finalPrecision = vsmSimilarityScore.finalPrecision / vsmSimilarityScore.totalExecution;
 			vsmSimilarityScore.finalRecall = vsmSimilarityScore.finalRecall / vsmSimilarityScore.totalExecution;
 			vsmSimilarityScore.finalFScore = vsmSimilarityScore.finalFScore / vsmSimilarityScore.totalExecution;
+			vsmSimilarityScore.finalReciprocalRank = vsmSimilarityScore.finalReciprocalRank / vsmSimilarityScore.totalExecution;
 			
 			resultStore.WriteData("VSM Similarity Scores:");
-			resultStore.WriteData("Precision:" + String.format("%.02f",vsmSimilarityScore.finalPrecision));
-			resultStore.WriteData("Recall:" + String.format("%.02f",vsmSimilarityScore.finalRecall));
-			resultStore.WriteData("FScore:" + String.format("%.02f",vsmSimilarityScore.finalFScore));
-			System.out.println("VSM Similarity excution Scores - Precision:" + vsmSimilarityScore.finalPrecision + " Recall:" + vsmSimilarityScore.finalRecall + " FScore:" + vsmSimilarityScore.finalFScore);
+			resultStore.WriteData("MeanAveragePrecision(mAP):" + String.format("%.02f",vsmSimilarityScore.finalPrecision));
+			resultStore.WriteData("MeanRecall(mR):" + String.format("%.02f",vsmSimilarityScore.finalRecall));
+			resultStore.WriteData("MeanF-Score(mFS):" + String.format("%.02f",vsmSimilarityScore.finalFScore));
+			resultStore.WriteData("MeanReciprocalRank(mRR):" + String.format("%.02f",vsmSimilarityScore.finalReciprocalRank));
+			System.out.println("VSM Similarity excution Scores - MeanAveragePrecision(mAP):" + vsmSimilarityScore.finalPrecision + " MeanRecall(mR):" + 
+					vsmSimilarityScore.finalRecall + " MeanF-Score(mFS):" + vsmSimilarityScore.finalFScore + " MeanReciprocalRank(mRR):" + vsmSimilarityScore.finalReciprocalRank);
 		}
 		
 		//lsisimilarity final score
@@ -208,12 +237,15 @@ public class GoldSetEvaluator
 			lsiSimilarityScore.finalPrecision = lsiSimilarityScore.finalPrecision / lsiSimilarityScore.totalExecution;
 			lsiSimilarityScore.finalRecall = lsiSimilarityScore.finalRecall / lsiSimilarityScore.totalExecution;
 			lsiSimilarityScore.finalFScore = lsiSimilarityScore.finalFScore / lsiSimilarityScore.totalExecution;
+			lsiSimilarityScore.finalReciprocalRank = lsiSimilarityScore.finalReciprocalRank / lsiSimilarityScore.totalExecution;
 			
 			resultStore.WriteData("LSI Similarity Scores:");
-			resultStore.WriteData("Precision:" + String.format("%.02f",lsiSimilarityScore.finalPrecision));
-			resultStore.WriteData("Recall:" + String.format("%.02f",lsiSimilarityScore.finalRecall));
+			resultStore.WriteData("MeanAveragePrecision(mAP):" + String.format("%.02f",lsiSimilarityScore.finalPrecision));
+			resultStore.WriteData("MeanRecall(mR):" + String.format("%.02f",lsiSimilarityScore.finalRecall));
 			resultStore.WriteData("FScore:" + String.format("%.02f",lsiSimilarityScore.finalFScore));
-			System.out.println("LSI Similariy excution Scores - Precision:" + lsiSimilarityScore.finalPrecision + " Recall:" + lsiSimilarityScore.finalRecall + " FScore:" + lsiSimilarityScore.finalFScore);
+			resultStore.WriteData("MeanReciprocalRank(mRR):" + String.format("%.02f",lsiSimilarityScore.finalReciprocalRank));
+			System.out.println("LSI Similariy excution Scores - MeanAveragePrecision(mAP):" + lsiSimilarityScore.finalPrecision + " MeanRecall(mR):" + 
+					lsiSimilarityScore.finalRecall + " MeanF-Score(mFS):" + lsiSimilarityScore.finalFScore + " MeanReciprocalRank(mRR):" + lsiSimilarityScore.finalReciprocalRank);
 		}
 		
 		resultStore.PrintLineSeperator();				
