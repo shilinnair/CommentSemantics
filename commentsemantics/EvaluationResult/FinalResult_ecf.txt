@@ -1,0 +1,198 @@
+Execution Mode:All Comments
+VSM Scores:
+MeanAveragePrecision(mAP):0.74
+MeanRecall(mR):0.48
+MeanF-Score(mFS):0.54
+MeanReciprocalRank(mRR):0.31
+LSI Scores:
+MeanAveragePrecision(mAP):0.68
+MeanRecall(mR):0.35
+MeanF-Score(mFS):0.42
+MeanReciprocalRank(mRR):0.25
+VSM Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.48
+MeanF-Score(mFS):0.61
+MeanReciprocalRank(mRR):0.43
+LSI Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.35
+FScore:0.48
+MeanReciprocalRank(mRR):0.38
+========================================================================================
+Execution Mode:All Comments-Code comments removed
+VSM Scores:
+MeanAveragePrecision(mAP):0.73
+MeanRecall(mR):0.42
+MeanF-Score(mFS):0.49
+MeanReciprocalRank(mRR):0.32
+LSI Scores:
+MeanAveragePrecision(mAP):0.69
+MeanRecall(mR):0.33
+MeanF-Score(mFS):0.42
+MeanReciprocalRank(mRR):0.30
+VSM Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.42
+MeanF-Score(mFS):0.55
+MeanReciprocalRank(mRR):0.44
+LSI Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.33
+FScore:0.47
+MeanReciprocalRank(mRR):0.38
+========================================================================================
+Execution Mode:Line Comments
+VSM Scores:
+MeanAveragePrecision(mAP):0.70
+MeanRecall(mR):0.25
+MeanF-Score(mFS):0.35
+MeanReciprocalRank(mRR):0.26
+LSI Scores:
+MeanAveragePrecision(mAP):0.73
+MeanRecall(mR):0.23
+MeanF-Score(mFS):0.32
+MeanReciprocalRank(mRR):0.30
+VSM Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.25
+MeanF-Score(mFS):0.38
+MeanReciprocalRank(mRR):0.36
+LSI Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.23
+FScore:0.35
+MeanReciprocalRank(mRR):0.35
+========================================================================================
+Execution Mode:Line Comments-Code comments removed
+VSM Scores:
+MeanAveragePrecision(mAP):0.69
+MeanRecall(mR):0.24
+MeanF-Score(mFS):0.34
+MeanReciprocalRank(mRR):0.25
+LSI Scores:
+MeanAveragePrecision(mAP):0.71
+MeanRecall(mR):0.24
+MeanF-Score(mFS):0.33
+MeanReciprocalRank(mRR):0.25
+VSM Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.24
+MeanF-Score(mFS):0.37
+MeanReciprocalRank(mRR):0.36
+LSI Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.24
+FScore:0.36
+MeanReciprocalRank(mRR):0.33
+========================================================================================
+Execution Mode:Block Comments
+VSM Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.10
+MeanF-Score(mFS):0.18
+MeanReciprocalRank(mRR):0.60
+LSI Scores:
+MeanAveragePrecision(mAP):0.75
+MeanRecall(mR):0.11
+MeanF-Score(mFS):0.19
+MeanReciprocalRank(mRR):0.33
+VSM Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.10
+MeanF-Score(mFS):0.18
+MeanReciprocalRank(mRR):0.34
+LSI Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.11
+FScore:0.20
+MeanReciprocalRank(mRR):0.37
+========================================================================================
+Execution Mode:Block Comments-Code comments removed
+VSM Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.10
+MeanF-Score(mFS):0.18
+MeanReciprocalRank(mRR):0.83
+LSI Scores:
+MeanAveragePrecision(mAP):0.98
+MeanRecall(mR):0.10
+MeanF-Score(mFS):0.19
+MeanReciprocalRank(mRR):0.25
+VSM Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.10
+MeanF-Score(mFS):0.18
+MeanReciprocalRank(mRR):0.45
+LSI Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.10
+FScore:0.19
+MeanReciprocalRank(mRR):0.44
+========================================================================================
+Execution Mode:JavaDoc Comments
+VSM Scores:
+MeanAveragePrecision(mAP):0.96
+MeanRecall(mR):0.12
+MeanF-Score(mFS):0.21
+MeanReciprocalRank(mRR):0.51
+LSI Scores:
+MeanAveragePrecision(mAP):0.58
+MeanRecall(mR):0.13
+MeanF-Score(mFS):0.20
+MeanReciprocalRank(mRR):0.23
+VSM Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.12
+MeanF-Score(mFS):0.21
+MeanReciprocalRank(mRR):0.35
+LSI Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.13
+FScore:0.23
+MeanReciprocalRank(mRR):0.28
+========================================================================================
+Execution Mode:JavaDoc Comments-Code comments removed
+VSM Scores:
+MeanAveragePrecision(mAP):0.97
+MeanRecall(mR):0.12
+MeanF-Score(mFS):0.20
+MeanReciprocalRank(mRR):0.49
+LSI Scores:
+MeanAveragePrecision(mAP):0.58
+MeanRecall(mR):0.14
+MeanF-Score(mFS):0.20
+MeanReciprocalRank(mRR):0.19
+VSM Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.12
+MeanF-Score(mFS):0.21
+MeanReciprocalRank(mRR):0.34
+LSI Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.14
+FScore:0.23
+MeanReciprocalRank(mRR):0.28
+========================================================================================
+Execution Mode:All Comments & Artefacts
+VSM Scores:
+MeanAveragePrecision(mAP):0.74
+MeanRecall(mR):0.63
+MeanF-Score(mFS):0.66
+MeanReciprocalRank(mRR):0.36
+LSI Scores:
+MeanAveragePrecision(mAP):0.68
+MeanRecall(mR):0.49
+MeanF-Score(mFS):0.54
+MeanReciprocalRank(mRR):0.24
+VSM Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.63
+MeanF-Score(mFS):0.74
+MeanReciprocalRank(mRR):0.46
+LSI Similarity Scores:
+MeanAveragePrecision(mAP):1.00
+MeanRecall(mR):0.49
+FScore:0.62
+MeanReciprocalRank(mRR):0.39
+========================================================================================
