@@ -295,7 +295,7 @@ public class UserScreen
 				
 				if(queryNumber != 0) {
 					goldsetEvaluator.EvaluateQueryResult(GoldSetEvaluator.FLType.VSM, queryNumber, docs);  //evaluate the qury result against the gold set
-					goldsetEvaluator.EvaluateSimilairyResult(GoldSetEvaluator.FLType.VSM, queryNumber, docs);  //valuating the similarity against gold set
+					goldsetEvaluator.EvaluateSimilairyResult(GoldSetEvaluator.FLType.VSM, queryNumber, similarDocs);  //valuating the similarity against gold set
 				}
 			}
 			
@@ -311,7 +311,7 @@ public class UserScreen
 				
 				if(queryNumber != 0) {
 					goldsetEvaluator.EvaluateQueryResult(GoldSetEvaluator.FLType.LSI, queryNumber, docs);
-					goldsetEvaluator.EvaluateSimilairyResult(GoldSetEvaluator.FLType.LSI, queryNumber, docs);
+					goldsetEvaluator.EvaluateSimilairyResult(GoldSetEvaluator.FLType.LSI, queryNumber, similarDocs);
 				}
 			}
 			resultStore.PrintLineSeperator();
