@@ -10,9 +10,11 @@ import java.util.Scanner;
 
 public class GoldSetEvaluator 
 {
-	public static final String Goldset_Src = "Goldset\\Src\\ecf\\";
-	public static final String Goldset_Query = "Goldset\\Query\\ecf\\";
-	public static final String Goldset_Result = "Goldset\\Result\\ecf\\";
+	public static final String Goldset_Src = "Goldset\\Src\\tomcat70\\"; //ecf; eclipse.jdt.core; eclipse.jdt.debug; eclipse.jdt.ui; eclipse.pde.ui; tomcat70
+	private static final String Goldset_Query = "Goldset\\Query\\tomcat70\\"; //ecf; eclipse.jdt.core; eclipse.jdt.debug; eclipse.jdt.ui; eclipse.pde.ui; tomcat70
+	private static final String Goldset_Result = "Goldset\\Result\\tomcat70\\"; //ecf; eclipse.jdt.core; eclipse.jdt.debug; eclipse.jdt.ui; eclipse.pde.ui; tomcat70
+	
+	private static final String Goldset_ProposeFile = "proposed-NL.txt"; //proposed-PE.txt; proposed-ST.txt
 	
 	public enum FLType {VSM, LSI}
 	
@@ -130,15 +132,15 @@ public class GoldSetEvaluator
 		
 		final int TruePositives = goldResults.size();
 		
-		for(int i=0; i< similarityResult.size(); ++i)
+		for(int i=0; i< goldResults.size(); ++i)
 		{
-			String similarDoc = similarityResult.get(i);
+			String goldresult = goldResults.get(i);
 			
-			if(goldResults.contains(similarDoc))
+			if(similarityResult.contains(goldresult))
 			{
 				numMachingDocs++;
 				
-				int index = goldResults.indexOf(similarDoc);		
+				int index = similarityResult.indexOf(goldresult);		
 				if(index < TruePositives) {
 					indexPrecision += 1.0f;
 				}
@@ -257,7 +259,7 @@ public class GoldSetEvaluator
 		
 		//populate query
 		try {
-			scanner = new Scanner(new File(Goldset_Query + "proposed-NL.txt"));
+			scanner = new Scanner(new File(Goldset_Query + Goldset_ProposeFile));
 			while (scanner.hasNextLine()) 
 			{
 			   String queryLine = scanner.nextLine();
@@ -280,7 +282,7 @@ public class GoldSetEvaluator
 		
 		//populate results
 		try {
-			scanner = new Scanner(new File(Goldset_Result + "proposed-NL.txt"));
+			scanner = new Scanner(new File(Goldset_Result + Goldset_ProposeFile));
 			List<String> tempResults = new ArrayList<>();
 			Integer queryDigits = 0;
 			
