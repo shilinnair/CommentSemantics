@@ -37,7 +37,7 @@ public class UserScreen
 	
 	static JCheckBox check_goldsetEvaluation = new JCheckBox("Goldset Evaluation Mode");
 	
-	static JCheckBox check_removeCodeComments = new JCheckBox("Remove Code-Comments");
+	static JCheckBox check_removeCodeComments = new JCheckBox("Exclude Commented Code");
 	static JCheckBox check_includeArtefacts = new JCheckBox("Include Artefacts");
 	
 	static JFileChooser fchooser = new JFileChooser();
