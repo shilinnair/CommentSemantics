@@ -204,7 +204,7 @@ MeanF-Score(mFS):0.60
 MeanReciprocalRank(mRR):0.30
 LSI Scores:
 MeanAveragePrecision(mAP):0.63
-MeanRecall(mR):0.0
+MeanRecall(mR):0.40
 MeanF-Score(mFS):0.43
 MeanReciprocalRank(mRR):0.18
 VSM Similarity Scores:
