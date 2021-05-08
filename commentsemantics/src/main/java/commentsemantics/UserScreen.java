@@ -77,7 +77,7 @@ public class UserScreen
 		JFrame  myUI = new JFrame();
 		myUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		myUI.setBounds(0, 0, 425, 525);
-		myUI.setTitle("Source code analysis project");
+		myUI.setTitle("Feature Location Assessment");
 
 		contentPane.setLayout(null);
 		myUI.setContentPane(contentPane);
