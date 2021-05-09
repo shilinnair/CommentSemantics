@@ -177,12 +177,19 @@ indexes
 - final result file
 - removed comments
 - lots of code
+- open src project query adn results
 
 additional writing if needed
 ============================
 - make documents from source code
 - write more literature reviews
 - vsm cosine similarity in the backgound
+
+
+
+Browse Project mode (\nameref{app_browsemode}) and Gold set Evaluation Mode (\nameref{app_goldsetmode}).
+
+\label{app_browsemode}
 
 
 
